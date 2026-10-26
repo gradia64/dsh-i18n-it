@@ -2,6 +2,25 @@
 
 # DECISIONS
 
+## 2026-10-26 — Italian only, in its own repository
+
+**Decision:** split the Italian locale out of the 20-locale fork into `gradia64/dsh-i18n-it`
+(`@gradia64/dsh-i18n-it`), keeping git history, and drop every other locale together with the
+Traditional Chinese converter, the Simplified-residue gate and RTL handling.
+
+**Why:** the plugin is installed only locally from GitHub (not on npm or the Market) and used only in
+Italian. After the 0.2.0-rc.2 and 0.2.1-rc.2 extractions, 17 locales were ~19% translated
+(~2350 of 2910 values still English each) and every DSH release widened the gap; their English
+placeholders were ~2.1 MB of the 2.98 MB client bundle. Italian alone is 178 KB, and each DSH update
+means translating one locale instead of twenty.
+
+**Kept stable:** internal ids (`dsh-i18n` cordis id, `/api/dsh-i18n.translate`, localStorage keys,
+cache dir), so the selected language and translation cache carry over. Only the package name changes,
+which the ModuleLoader id and `cordis.patch.yml` follow.
+
+**Not chosen:** keeping 20 locales with English placeholders (bundle cost, maintenance with no user);
+a fresh repository without history (loses the extraction and translation record).
+
 ## 2026-09-29 — DSH 0.2.0-rc.2 compatibility
 
 **Decision:** bump the plugin to support `@deepseek-ai/dsh` 0.2.0-rc.2; add the 0.2.0-rc.2

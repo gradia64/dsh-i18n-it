@@ -4,7 +4,6 @@ node_modules/
 # 開發/驗證產物
 verify/*.png
 verify/*.txt
-src/zh-tw-parts/collected-chars.txt
 
 # 機器翻譯暫存（本地 venv / 模型 / 腳本，唔入 repo）
 src/*/.mt/

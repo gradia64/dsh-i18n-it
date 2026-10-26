@@ -4,13 +4,12 @@
 
 | Capability | Source of truth | Generated/runtime output | Gate |
 |---|---|---|---|
-| Supported locales and metadata | `scripts/locales.mjs` | `lib/client.js` language list | `scripts/check.mjs` |
-| Translation dictionaries | `src/en`, `src/<locale>` | `lib/client.js` DICTS | `npm run i18n:check` |
+| Supported locale (it) and metadata | `scripts/locales.mjs` | `lib/client.js` language list | `scripts/check.mjs` |
+| Translation dictionary | `src/en`, `src/it` | `lib/client.js` DICTS | `npm run i18n:check` |
 | Upstream extraction | Installed DSH client bundles | `src/en`, `src/zh-src` | Extractor fails on missing/changed bundles |
-| Traditional fallback | `src/zh-tw-parts/chars.json` | Runtime converter for zh-HK/zh-TW | `verify-converter.mjs` |
-| Streaming DOM skip | `scripts/assemble.mjs` (`DOM_SKIP_SELECTOR`, observers) | Do not walk conversation tokens | `verify-runtime.mjs` |
-| Arabic direction | Locale registry `rtl` flag | Document `lang` and `dir` | Generated client behavior |
+| English fallback | `scripts/assemble.mjs` (`locale.translate` wrapper) | Missing `it` keys show English | `verify-runtime.mjs` |
+| Auto-translate (client) | `scripts/assemble.mjs` (MT observer, `DOM_SKIP_SELECTOR`) | Long English DOM text → `/api/dsh-i18n.translate` | `verify-runtime.mjs` |
+| Auto-translate (host) | `index.mjs` (`Config`, cache, `ctx.llm.stream`) | Fetch route `/api/dsh-i18n.translate` | — |
 | Untranslated-English detection | `scripts/check.mjs` `englishWordCount` | — | `npm run i18n:check` |
-| Simplified residue in zh-HK/zh-TW | `src/zh-tw-parts/chars.json` keys | — | `npm run i18n:check` |
-| Package release metadata | `package.json` | npm/GitHub metadata | `npm test` |
+| Package release metadata | `package.json`, `cordis.patch.yml` | ModuleLoader id = package name | `verify-runtime.mjs` |
 | Host version contract | `package.json` `engines` + `peerDependencies` | — | `npm run verify:peers` |

@@ -1,83 +1,75 @@
-# dsh-i18n
+# dsh-i18n-it
 
-**[繁體中文（香港）](README.zh-HK.md)** · **[繁體中文（台灣）](README.zh-TW.md)** · [English](README.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Deutsch](README.de.md) · [Español](README.es.md) · [Português (Brasil)](README.pt-BR.md) · [Italiano](README.it.md) · [Русский](README.ru.md) · [Українська](README.uk.md) · [Polski](README.pl.md) · [Nederlands](README.nl.md) · [Türkçe](README.tr.md) · [العربية](README.ar.md) · [हिन्दी](README.hi.md) · [Bahasa Indonesia](README.id.md) · [Tiếng Việt](README.vi.md) · [ไทย](README.th.md) · [Svenska](README.sv.md)
+Localizzazione italiana per la DeepSeek Harness Web UI. Aggiunge l'**Italiano** in **Impostazioni → Generali → Lingua**, accanto a 中文 / English, con tutte le stringhe dell'interfaccia tradotte a mano e la traduzione automatica del testo che il dizionario non copre.
 
-A sustainable internationalization plugin for the DeepSeek Harness Web UI. Version 0.2.8 registers **20 locales** from one registry while preserving DSH's existing client ModuleLoader integration, locale service, preference migration, and runtime fallback behavior. Compatible with DeepSeek Harness **0.2.0-rc.2**.
+Deriva da [gradia64/dsh-i18n](https://github.com/gradia64/dsh-i18n) (a sua volta fork di [mimateinn/dsh-i18n](https://github.com/mimateinn/dsh-i18n)), ridotto alla sola lingua italiana.
 
-## Locales
+## Funzionalità
 
-繁體中文（香港、台灣）, 日本語, 한국어, Français, Deutsch, Español, Português (Brasil), Italiano, Русский, Українська, Polski, Nederlands, Türkçe, العربية, हिन्दी, Bahasa Indonesia, Tiếng Việt, ไทย, and Svenska.
+- Dizionario italiano per tutti i 54 pacchetti client di DSH (2910 chiavi, estratte da DSH 0.2.1-rc.3).
+- Fallback in inglese: le stringhe nuove di DSH o dei plugin di terzi non ancora tradotte compaiono in inglese, mai come chiavi grezze.
+- **Traduzione automatica**: con l'italiano attivo, il testo inglese lungo (descrizioni del marketplace, interfacce di terzi, messaggi di errore) viene tradotto dal modello configurato in DSH e salvato in cache. La conversazione in streaming e il composer non vengono toccati.
+- La lingua scelta resta salvata in `localStorage` e sopravvive al ricaricamento.
+- Nessuna modifica ai pacchetti di DSH; se il servizio locale manca, il plugin si disattiva in silenzio.
 
-- Traditional Chinese locales (zh-HK, zh-TW) fall back from the built-in Simplified Chinese dictionaries through the existing character converter.
-- Arabic sets the document language and direction to `ar` / `rtl`; other managed locales use `ltr`.
-- Untranslated non-Chinese values fall back to English.
-
-## Features
-
-- Adds all 20 locales to **Settings → General → Language**, alongside the built-in 中文 / English.
-- Per-language translations from an English baseline (2910 keys per locale after the 0.2.1-rc.3 re-extraction; keys added by the 0.2.0-rc.2, 0.2.1-rc.2 and 0.2.1-rc.3 updates are English placeholders pending translation).
-- Runtime fallback: new/updated/third-party strings fall back to English (or Simplified→Traditional conversion for zh-HK/zh-TW), so upstream UI updates and other plugins are covered without re-translating every language.
-- Language preference persisted in browser `localStorage`; reload-proof.
-- **Auto-translate**: with a non-Chinese locale active, long English text (plugin-market descriptions, third-party UI, error prose) is auto-translated to your language through your configured model, and cached so re-renders don't undo it. The default language (en/zh) is left untouched; Traditional Chinese keeps the built-in Simplified→Traditional conversion instead of calling a model.
-- Zero intrusion on dictionaries: no upstream package changes, silent degradation if the locale service is missing.
-
-## Install
-
-Install from GitHub, from the `gradia-local` branch (or pin a commit with `#<commit>`):
+## Installazione
 
 ```bash
-dsh plugin --profile <active-profile> add github:gradia64/dsh-i18n#gradia-local
+dsh plugin --profile <profilo-attivo> add github:gradia64/dsh-i18n-it
 ```
 
-This fork installs as `@gradia64/dsh-i18n` and is not published on npm (the `@mimateinn/dsh-i18n` npm package is the upstream build and does not contain this branch's changes). If you have `@mimateinn/dsh-i18n` installed, remove it first with `dsh plugin --profile <active-profile> remove @mimateinn/dsh-i18n`; the chosen language and the translation cache are kept.
-
-For DSH Desktop the active profile is the `active` value in
-`%APPDATA%/DSH Desktop/profile-selection/state.json` (usually `desktop`). The per-profile shim
-`host-commands/<profile>/bin/dsh.cmd` bakes its own profile name into the command, so running the
-`web` shim installs into the `web` profile even while Desktop is showing `desktop` — the install
-succeeds and the plugin is never loaded. Pass `--profile` explicitly to be sure.
-
-DSH Desktop's Market install paths accept only an exact published npm version, so a GitHub spec must
-go through the built-in terminal `dsh plugin add`, which forwards the specifier to pnpm unvalidated.
-Run the same command again to update to the latest `gradia-local`; pnpm pins the commit it resolved at install time.
-
-Restart the host, then choose a language in **Settings → General → Language**. Remove with
-`dsh plugin --profile <active-profile> remove @gradia64/dsh-i18n`.
-
-## Compatibility
-
-- DeepSeek Harness **0.1.1-rc.2 or newer**, up to and including **0.2.1-rc.2** (`engines.dsh`: `>=0.1.1-rc.2 <0.3.0-0`).
-- Node.js **`^22.19.0 || >=24.0.0`** (official harness `engines.node`).
-- DSH checks `engines.dsh` with prereleases included; host packages are also `peerDependencies` with explicit `0.1.1-rc.*`, `0.2.0-rc.*` and `0.2.1-rc.*` branches so node-semver (pnpm) does not silently exclude harness prereleases ([awesome-dsh-plugin contributing](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/blob/main/contributing.md)).
-- `manifestVersion: 1` aligns with the `dsh-package-manifest` format used by the 0.2.x plugin manager.
-
-## Maintenance pipeline
-
-The locale registry is `scripts/locales.mjs`. Translation data remains in `src/<locale>/`; generated browser code is `lib/client.js`.
+Se avevi installato il plugin multilingua, rimuovilo prima (la lingua scelta e la cache delle traduzioni restano):
 
 ```bash
-npm run i18n:check     # file, namespace/key, stale, placeholder, empty, English-residue, Simplified-residue parity
-npm run i18n:build     # assemble registry locales into lib/client.js
-npm test               # check + build + converter verification + runtime harness
-
-node scripts/extract.mjs <installed-dsh-path>   # re-extract upstream dictionaries
-node scripts/migrate-locales.mjs                # merge new keys into locale dirs (English placeholders)
-node scripts/fill-traditional.mjs               # zh-HK/zh-TW: fill new keys from zh-src via the converter
-node scripts/check.mjs --record-pending         # record remaining English placeholders as pending
+dsh plugin --profile <profilo-attivo> remove @gradia64/dsh-i18n
 ```
 
-Extraction accepts an installed DSH root, its `@deepseek-ai` package directory, or the unpacked desktop application path. After extracting new upstream dictionaries, run `migrate-locales.mjs` to merge new keys and create new package files for all 20 locales. New keys start as English placeholders (zh-HK/zh-TW are then filled from zh-src by `fill-traditional.mjs`). `check.mjs` still fails on English residue, except for keys listed in `scripts/pending-translation.json`, which are reported as warnings; remove a key from that list once it is translated.
+Riavvia DSH e scegli **Italiano** in **Impostazioni → Generali → Lingua**. Per aggiornare, ripeti il comando `add`: pnpm fissa il commit risolto al momento dell'installazione.
 
-## Publishing
+Su DSH Desktop il profilo attivo è il valore `active` in `%APPDATA%/DSH Desktop/profile-selection/state.json` (di solito `desktop`). Passa sempre `--profile`: ogni shim `host-commands/<profilo>/bin/dsh.cmd` ha il proprio profilo scritto dentro, quindi lo shim `web` installa nel profilo `web` anche se Desktop usa `desktop`, e il plugin non viene mai caricato. Il Market di Desktop accetta solo versioni npm esatte, quindi un pacchetto da GitHub si installa solo dal terminale con `dsh plugin add`.
 
-The npm package includes runtime entries, the generated client, locale data, and the locale registry. Source repository: https://github.com/gradia64/dsh-i18n (branch `gradia-local`), forked from https://github.com/mimateinn/dsh-i18n.
+Rimozione: `dsh plugin --profile <profilo-attivo> remove @gradia64/dsh-i18n-it`.
 
-## Security and privacy
+## Configurazione (lato host)
 
-- The plugin makes no network calls itself, has no telemetry, and reads/writes only two browser localStorage keys: the selected locale id and the translate-model override.
-- Auto-translate runs through DSH's built-in LLM service (your configured model), not a third-party API. It only fires for long English prose when a non-Chinese locale is active; the default language is never sent for translation.
-- No filesystem access, no credential handling.
+| Opzione | Default | Effetto |
+|---|---|---|
+| `autoTranslate` | `true` | `false` disattiva le chiamate al modello; il testo non coperto resta in inglese. |
+| `reasoningEffort` | `"off"` | Effort usato per le traduzioni; stringa vuota = default del modello. |
+| `cache` | `true` | Cache su disco condivisa da tutti i browser (`~/.cache/dsh-i18n/translations.json`). |
+| `cacheFile` | `""` | Percorso alternativo per la cache. |
+| `cacheMaxEntries` | `5000` | Numero massimo di voci in cache. |
 
-## License
+Dal browser si può forzare il modello di traduzione con `localStorage["dsh-i18n.mt"] = '{"provider":"…","model":"…"}'`.
+
+## Compatibilità
+
+- DeepSeek Harness da **0.1.1-rc.2** a **0.2.1-rc.3** inclusa (`engines.dsh`: `>=0.1.1-rc.2 <0.3.0-0`).
+- Node.js `^22.19.0 || >=24.0.0`.
+- Le `peerDependencies` hanno rami espliciti per `0.1.1-rc.*`, `0.2.0-rc.*` e `0.2.1-rc.*`, perché node-semver non esclude in silenzio le prerelease di DSH.
+
+## Manutenzione
+
+Quando esce una nuova versione di DSH:
+
+```bash
+node scripts/extract.mjs <percorso-dsh-installato>   # riestrae src/en e src/zh-src
+node scripts/migrate-locales.mjs                     # aggiunge le chiavi nuove a src/it (segnaposto inglesi)
+# tradurre in src/it/ le chiavi nuove
+node scripts/check.mjs --record-pending              # aggiorna l'elenco delle chiavi intenzionalmente in inglese
+npm test                                             # peer + controllo dizionario + build + test di runtime
+```
+
+- `scripts/extract.mjs` legge un elenco fisso di pacchetti (`PKGS`): un pacchetto client nuovo va aggiunto a mano, altrimenti le sue stringhe non vengono estratte.
+- `scripts/check.mjs` fallisce su file, namespace o chiavi mancanti, segnaposto `{…}` diversi dall'inglese e frasi inglesi di 3+ parole non tradotte (salvo quelle in `scripts/pending-translation.json`).
+- `lib/client.js` è generato da `scripts/assemble.mjs`: non modificarlo a mano.
+
+## Sicurezza e privacy
+
+- Il plugin non fa chiamate di rete per conto suo, non ha telemetria e usa solo due chiavi di `localStorage`: la lingua scelta e l'eventuale modello di traduzione.
+- La traduzione automatica passa dal servizio LLM interno di DSH (il tuo modello), non da API esterne, e parte solo con l'italiano attivo.
+- L'unico accesso al filesystem è la cache delle traduzioni lato host.
+
+## Licenza
 
 MIT

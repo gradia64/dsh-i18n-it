@@ -1,7 +1,7 @@
 {
-  "name": "@gradia64/dsh-i18n",
-  "version": "0.2.8-gradia.5",
-  "description": "20-locale internationalization with automatic translation for the DeepSeek Harness Web UI",
+  "name": "@gradia64/dsh-i18n-it",
+  "version": "0.3.0",
+  "description": "Italian localization with automatic translation for the DeepSeek Harness Web UI",
   "type": "module",
   "main": "./index.mjs",
   "types": "./index.d.ts",
@@ -23,7 +23,7 @@
     "i18n:migrate": "node scripts/migrate-locales.mjs",
     "verify:runtime": "node scripts/verify-runtime.mjs",
     "verify:peers": "node scripts/verify-peers.mjs",
-    "test": "npm run verify:peers && npm run i18n:check && npm run i18n:build && node scripts/verify-converter.mjs && npm run verify:runtime"
+    "test": "npm run verify:peers && npm run i18n:check && npm run i18n:build && npm run verify:runtime"
   },
   "dsh": {
     "manifestVersion": 1,
@@ -40,8 +40,8 @@
     "market": {
       "category": "ui",
       "description": {
-        "en": "Adds 20 locales (Traditional Chinese HK/TW, Japanese, Korean, French, German, Spanish, Portuguese, Italian, Russian, Ukrainian, Polish, Dutch, Turkish, Arabic, Hindi, Indonesian, Vietnamese, Thai, Swedish) to the DeepSeek Harness Web UI, with hand-polished translations, runtime fallbacks, and automatic translation of market and third-party text.",
-        "zh": "为 DeepSeek Harness 界面新增 20 种语言（繁体中文香港/台湾、日语、韩语、法语、德语、西班牙语、葡萄牙语、意大利语、俄语、乌克兰语、波兰语、荷兰语、土耳其语、阿拉伯语、印地语、印尼语、越南语、泰语、瑞典语），逐条精译并带运行时兜底，另加自动翻译，把市场与第三方文本翻译成你的语言。"
+        "en": "Adds Italian to the DeepSeek Harness Web UI, with hand-polished translations, English fallback for new strings, and automatic translation of market and third-party text.",
+        "zh": "为 DeepSeek Harness 界面新增意大利语：逐条精译，新字串回退英文，另以自动翻译覆盖市场与第三方文本。"
       }
     }
   },
@@ -61,11 +61,8 @@
     "dsh",
     "i18n",
     "localization",
-    "multilingual",
-    "20-locales",
-    "traditional-chinese",
-    "rtl",
-    "arabic"
+    "italian",
+    "italiano"
   ],
   "files": [
     "index.mjs",
@@ -73,20 +70,16 @@
     "lib/client.js",
     "cordis.patch.yml",
     "README.md",
-    "README.*.md",
     "LICENSE",
     "scripts/locales.mjs"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gradia64/dsh-i18n.git"
+    "url": "git+https://github.com/gradia64/dsh-i18n-it.git"
   },
-  "homepage": "https://github.com/gradia64/dsh-i18n/tree/gradia-local#readme",
+  "homepage": "https://github.com/gradia64/dsh-i18n-it#readme",
   "bugs": {
-    "url": "https://github.com/gradia64/dsh-i18n/issues"
-  },
-  "publishConfig": {
-    "access": "public"
+    "url": "https://github.com/gradia64/dsh-i18n-it/issues"
   }
 }

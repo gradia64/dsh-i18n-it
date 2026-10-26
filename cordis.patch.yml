@@ -2,4 +2,4 @@
     - id: dsh-i18n
       # Node-resolvable package name — must stay in sync with package.json "name".
       # Quoted because "@" is a reserved indicator in YAML and cannot open a plain scalar.
-      name: '@gradia64/dsh-i18n'
+      name: '@gradia64/dsh-i18n-it'

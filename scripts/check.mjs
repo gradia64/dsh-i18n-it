@@ -42,15 +42,6 @@ const RECORD = process.argv.includes("--record-pending");
 const pendingSeen = new Set();
 const newPending = [];
 
-// --- 簡體殘留閘 ---
-// 只查 traditional locale。chars.json 嘅 key 全部係簡體專用字（0 個 identity mapping），
-// 所以精譯值入面出現任何一個 key 字，就係漏轉。注意：runtime 對「精譯命中」唔會再過轉換器
-// （只有 fallback 先會），所以呢類殘留一定去到 UI，verify-converter.mjs 永遠查唔到。
-const simplifiedChars = new Set(
-  Object.keys(JSON.parse(fs.readFileSync(path.join(root, "src", "zh-tw-parts", "chars.json"), "utf8"))),
-);
-const simplifiedResidue = (value) => [...new Set([...String(value)].filter((char) => simplifiedChars.has(char)))];
-
 for (const locale of locales) {
   const dir = path.join(root, "src", locale.dir);
   if (!fs.existsSync(dir)) { fail.push(`${locale.id}: missing src/${locale.dir}`); continue; }
@@ -85,10 +76,6 @@ for (const locale of locales) {
           if (RECORD) newPending.push(id);
           else if (PENDING.has(id)) { pendingSeen.add(id); warn.push(`${msg} (pending translation)`); }
           else fail.push(msg);
-        }
-        if (locale.traditional) {
-          const residue = simplifiedResidue(target[key]);
-          if (residue.length) fail.push(`${locale.id}/${file} [${ns}.${key}]: simplified residue ${residue.join("")}`);
         }
       }
     }

@@ -126,50 +126,42 @@ ok(clientSrc.includes("browserLocaleId"), "bundle can seed from browser locale")
 ok(clientSrc.includes("addLanguage"), "bundle uses addLanguage");
 ok(clientSrc.includes("localeKey"), "bundle uses localeKey for dict lookups");
 
-// 1) all 20 locales registered in catalog + dictionaries
+// 1) every registry locale is in the catalog with a full dictionary
 const { locales } = await import(pathToFileURL(path.join(root, "scripts", "locales.mjs")).href);
-let totalReg = 0;
+const EXPECTED_KEYS = 2910;
 for (const L of locales) {
   ok(catalog.has(localeKey(L.id)), "catalog has " + L.id);
   let keys = 0;
   for (const nsMap of dicts.values()) keys += Object.keys(nsMap.get(localeKey(L.id)) ?? {}).length;
-  if (keys !== 2910) ok(false, "locale " + L.id + " keys=" + keys, "expected 2910");
-  else totalReg++;
+  ok(keys === EXPECTED_KEYS, "locale " + L.id + " registers " + EXPECTED_KEYS + " keys", "got " + keys);
 }
-ok(totalReg === 20, "all 20 locales registered with 2910 keys", totalReg + "/20");
+ok(catalog.get("it")?.fallback === "en", "it falls back to en", JSON.stringify(catalog.get("it")));
 ok(clientSrc.includes("characterData: false"), "observers omit characterData");
 ok(!clientSrc.includes("characterData: true"), "no characterData:true observers");
 ok(clientSrc.includes("[data-conversation-scroll]"), "skip conversation scrollport");
 ok(clientSrc.includes("[data-team-panel]"), "skip AgentTeams panel");
 ok(!clientSrc.includes("[data-agent-teams-panel-open]"), "old AgentTeams selector removed");
 
-// 2) curated translate for a sample across locales (case-insensitive dict keys)
-locale.setLocale("fr");
-const frKey = Object.keys(dicts.get("conversation").get("fr"))[0];
-const fr = locale.translate("conversation", frKey);
-ok(typeof fr === "string" && fr.length > 0 && fr !== frKey, "translate returns curated string under fr", JSON.stringify(fr));
+// 2) curated translate under it (case-insensitive dict keys)
+locale.setLocale("it");
+ok(locale.getLocale().active === "it", "setLocale accepts it from catalog");
+ok(documentMock.documentElement.lang === "it", "document lang is it", documentMock.documentElement.lang);
+const itSample = locale.translate("settings.locale", "language.title");
+ok(typeof itSample === "string" && itSample.length > 0 && itSample !== "language.title", "translate returns curated string under it", JSON.stringify(itSample));
 
-// 2b) Traditional Chinese activates via setLocale and converts Simplified fallback
-locale.setLocale("zh-HK");
-ok(locale.getLocale().active === "zh-HK", "setLocale accepts zh-HK from catalog");
-ok(documentMock.documentElement.lang === "zh-HK", "document lang is zh-HK");
-const hkSample = locale.translate("settings.locale", "language.title");
-ok(typeof hkSample === "string" && hkSample.length > 0, "zh-HK translate returns string", JSON.stringify(hkSample));
-
-// 3) RTL toggle
-locale.setLocale("ar");
-ok(documentMock.documentElement.dir === "rtl", "ar sets dir=rtl", documentMock.documentElement.dir);
-locale.setLocale("fr");
-ok(documentMock.documentElement.dir === "ltr", "fr restores dir=ltr", documentMock.documentElement.dir);
+// 3) a key missing from the it dictionary falls back to English
+dicts.set("fallback.test", new Map([["en", { "only.en": "English only {n}" }]]));
+ok(locale.translate("fallback.test", "only.en", { n: 2 }) === "English only 2", "missing it key falls back to en", JSON.stringify(locale.translate("fallback.test", "only.en", { n: 2 })));
 
 // 4) unknown key graceful
 const unknown = locale.translate("nonexistent.ns", "no.such.key");
 ok(unknown === "no.such.key", "unknown key returns key itself", JSON.stringify(unknown));
 
 // 5) preference round-trip survives adopt
-localStorageMock.setItem("dsh-i18n.preference", "zh-TW");
+locale.setLocale("en");
+localStorageMock.setItem("dsh-i18n.preference", "it");
 locale.adopt({});
-ok(locale.getLocale().active === "zh-TW", "adopt re-asserts localStorage preference", locale.getLocale().active);
+ok(locale.getLocale().active === "it", "adopt re-asserts localStorage preference", locale.getLocale().active);
 
 console.log(failures === 0 ? "ALL PASS" : failures + " FAILURES");
 process.exit(failures === 0 ? 0 : 1);

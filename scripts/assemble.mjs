@@ -1,4 +1,4 @@
-// assemble.mjs — 从 src/<lang>/*.json 生成 lib/client.js（内嵌全部语言字典 + 插件逻辑）
+// assemble.mjs — genera lib/client.js da src/<lang>/*.json (dizionari + logica del plugin)
 // 用法: node scripts/assemble.mjs
 import fs from "node:fs";
 import path from "node:path";
@@ -15,17 +15,14 @@ if (typeof CLIENT_MODULE_ID !== "string" || CLIENT_MODULE_ID.length === 0) {
   throw new Error("package.json name is required as the ModuleLoader id");
 }
 
-// 语言注册表：dir 为 src/ 下的字典目录（小写），id 为 locale id，label 为语言行显示名。
-// useConvert=true 表示该语言支持「简中字元表即时转换」兜底（目前只有 zh-TW 同源可行）；
-// 其他语言缺精译时 fallback 英文（en 字典由官方注册，全部 namespace 齐备）。
-const LANGUAGES = locales.map(({ id, dir, label, traditional, rtl }) => ({
-  id, dir, label, useConvert: Boolean(traditional), rtl: Boolean(rtl),
-}));
+// Registro lingue: dir è la cartella in src/, id il locale id, label l'etichetta nella riga Lingua.
+// Le chiavi senza traduzione ricadono sull'inglese (il dizionario en è registrato da DSH).
+const LANGUAGES = locales.map(({ id, dir, label }) => ({ id, dir, label }));
 
 const dicts = {}; // langId -> { ns -> dict }
 for (const lang of LANGUAGES) {
   const langDir = path.join(root, "src", lang.dir);
-  if (!fs.existsSync(langDir)) throw new Error(`missing src/${lang.dir}/ — 先翻译好该语言再 assemble`);
+  if (!fs.existsSync(langDir)) throw new Error(`missing src/${lang.dir}/`);
   const files = fs.readdirSync(langDir).filter((f) => f.endsWith(".json")).sort();
   const perLang = {};
   let keys = 0;
@@ -41,32 +38,24 @@ for (const lang of LANGUAGES) {
   console.log(`  ${lang.id} (${lang.dir}): ${files.length} files, ${keys} keys`);
 }
 
-// 单字简→繁字元表（zh-TW 运行时兜底用）
-const CHARS = JSON.parse(fs.readFileSync(path.join(root, "src", "zh-tw-parts", "chars.json"), "utf8"));
-console.log(`char table: ${Object.keys(CHARS).length} entries`);
-
-const LANGUAGES_JSON = JSON.stringify(LANGUAGES.map(({ id, label, useConvert, rtl }) => ({ id, label, useConvert, rtl })));
+const LANGUAGES_JSON = JSON.stringify(LANGUAGES.map(({ id, label }) => ({ id, label })));
 const DICTS_JSON = JSON.stringify(dicts);
-const CHARS_JSON = JSON.stringify(CHARS);
 
 const clientJs = `/* global window */
-// lib/client.js — dsh-i18n 的 Browser 侧 bundle（手写 CJS factory，供 dsh web
-// 客户端 ModuleLoader 注入）。
+// lib/client.js — bundle Browser di dsh-i18n-it (factory CJS scritta a mano, iniettata
+// dal ModuleLoader del client web DSH). Generato da scripts/assemble.mjs: non modificare.
 //
-// 职责：
-//  1. 为全部 locale namespace 注册多语言（繁體中文 / 日本語 / 한국어 / Français /
-//     Deutsch / Español）字典——各语言由英文（en）或简体中文（zh）基准逐条翻译而来，
-//     经 dsh-client-locale 的 LocaleRuntime 随 DSH web 语言设置切换；
-//  2. 缺精译兜底：zh-TW 用内置简→繁字元表即时转繁（覆盖官方新增/改动字串与第三方
-//     插件 namespace）；其他语言 fallback 英文（en 字典官方齐备），不会出现乱码；
-//  3. 把全部语言加入设置页「语言」选择行（patch locale snapshot + 触发
-//     locale/change 刷新语言行选项，并包装 setLocale 接受全部语言 id）；
-//  4. 用 localStorage 持久化用户选择（语言偏好本就是浏览器本地偏好；内置 locale
-//     的 settings 通道对 remote browser 也不持久，且 apiproxy 的 settings 白名单
-//     不向插件开放自定义 namespace），刷新后保持语言选择。
+// Compiti:
+//  1. registra il dizionario italiano per tutti i namespace del locale, tradotto voce per
+//     voce dalla base inglese; segue la lingua scelta nelle impostazioni di DSH;
+//  2. fallback: le chiavi senza traduzione (stringhe nuove di DSH, plugin di terzi)
+//     mostrano l'inglese;
+//  3. aggiunge l'italiano alla riga Lingua delle impostazioni;
+//  4. salva la scelta in localStorage, così resta dopo il ricaricamento;
+//  5. traduzione automatica via modello del testo inglese lungo non coperto dal dizionario.
 //
-// 依赖注入：@deepseek-ai/dsh-client-locale（locale 服务）；locale 服务缺失时
-// 静默降级（不注册字典、不改语言行），不破坏其他插件。
+// Dipendenze iniettate: @deepseek-ai/dsh-client-locale (servizio locale); se manca, il
+// plugin si disattiva in silenzio senza toccare gli altri plugin.
 window.__ModuleLoader__.load({
   id: ${JSON.stringify(CLIENT_MODULE_ID)},
   factory: (require) => {
@@ -79,11 +68,8 @@ window.__ModuleLoader__.load({
     // 舊包名遷移鏈：dsh-multi-lang-ui → dsh-zh-tw-ui → dsh-locale-zh-tw
     const LEGACY_STORAGE_KEYS = ["dsh-multi-lang-ui.preference", "dsh-zh-tw-ui.preference", "dsh-locale-zh-tw.preference"];
 
-    // 全部语言的精译字典（由 scripts/assemble.mjs 生成；质量基准）
+    // Dizionari tradotti (generati da scripts/assemble.mjs)
     const DICTS = ${DICTS_JSON};
-
-    // 单字简→繁字元表（zh-TW 运行时兜底；scripts/verify-converter.mjs 校验）
-    const CHARS = ${CHARS_JSON};
 
     const name = "dsh-i18n";
     const PLUGIN_VERSION = ${JSON.stringify(pkg.version)};
@@ -93,20 +79,6 @@ window.__ModuleLoader__.load({
     // Match dsh-client-locale's case-insensitive Map key (value.toLowerCase()).
     function localeKey(value) {
       return String(value).toLowerCase();
-    }
-
-    // 纯单字简→繁转换（不做術語片語；{佔位符} 内无汉字，天然安全）。
-    // fast-path：先扫一遍有没有需要转换的字，没有就直接返回原串（避免热路径分配）。
-    const CHARS_SET = new Set(Object.keys(CHARS));
-    function convertZhTw(text) {
-      let need = false;
-      for (const ch of text) {
-        if (CHARS_SET.has(ch)) { need = true; break; }
-      }
-      if (!need) return text;
-      let out = "";
-      for (const ch of text) out += CHARS[ch] ?? ch;
-      return out;
     }
 
     function applyParams(template, params) {
@@ -145,7 +117,7 @@ window.__ModuleLoader__.load({
         for (const legacy of LEGACY_STORAGE_KEYS) window.localStorage.removeItem(legacy);
       } catch { /* 隐私模式等：忽略，语言选择在本次会话内生效 */ }
     }
-    // Exact browser tag only (zh-HK, not zh). First launch with no saved choice.
+    // Exact browser tag only (it, not it-CH). First launch with no saved choice.
     function browserLocaleId() {
       try {
         const nav = typeof navigator !== "undefined" ? navigator : null;
@@ -161,19 +133,12 @@ window.__ModuleLoader__.load({
       return null;
     }
 
-    // ---- DOM 级兜底轉換（僅 zh-TW）----
-    // locale.translate 只覆盖字典字串；插件市场描述、第三方插件的自有文案等由
-    // 数据/组件直接渲染的内容不经字典。zh-TW 活跃时用 MutationObserver 把 DOM 里
-    // 残留的简体即时转繁（输入框/代码块等用户内容排除），切回其他语言时还原。
-    // （其他语言无法做字符级自动转换，非字典内容保持原文。）
+    // ---- Superfici da non toccare ----
     // Conversation / composer / AgentTeams live surfaces stream token text as
     // characterData. Walking those on every token stalls the renderer so the
-    // model keeps running while glyphs never paint. Skip them; chrome/settings
-    // still get conversion via childList.
+    // model keeps running while glyphs never paint. Skip them in the auto-translate
+    // observer; chrome/settings are still handled via childList.
     const DOM_SKIP_SELECTOR = "input, textarea, select, [contenteditable], pre, code, script, style, [data-conversation-scroll], [data-composer-input], [data-composer-card], [data-composer-seat], [data-team-id], [data-team-panel], [data-team-action], [data-recovery], [data-renderer-recovery], [data-boot-recovery]";
-    const domConverted = new WeakMap(); // Text -> 原始字符串
-    let domObserver = null;
-    let domOriginalLang = null;
     let domRaf = 0;
     let domQueued = null;
 
@@ -189,11 +154,6 @@ window.__ModuleLoader__.load({
       const t = text || "";
       return /require\\(|missed the module|Recovery Mode|恢复模式|恢復模式|client-modules:|__ModuleLoader__|entrypoint|dsh-client-runtime/.test(t);
     }
-    function domShouldSkip(node) {
-      if (closestMatches(node, DOM_SKIP_SELECTOR)) return true;
-      if (node.nodeType === 3 && isProtectedChromeText(node.nodeValue)) return true;
-      return false;
-    }
     function scheduleDomWork(fn) {
       if (!domQueued) domQueued = [];
       domQueued.push(fn);
@@ -208,22 +168,6 @@ window.__ModuleLoader__.load({
       if (typeof requestAnimationFrame === "function") domRaf = requestAnimationFrame(run);
       else domRaf = window.setTimeout(run, 16);
     }
-    function domConvertText(node) {
-      if (node.nodeType !== 3 || domShouldSkip(node)) return;
-      const original = node.nodeValue;
-      if (!original) return;
-      const converted = convertZhTw(original);
-      if (converted !== original) {
-        if (!domConverted.has(node)) domConverted.set(node, original);
-        node.nodeValue = converted;
-      }
-    }
-    function domRestoreText(node) {
-      if (node.nodeType === 3 && domConverted.has(node)) {
-        node.nodeValue = domConverted.get(node);
-        domConverted.delete(node);
-      }
-    }
     function skipFilter(node) {
       if (node.nodeType === 1) {
         return node.matches && node.matches(DOM_SKIP_SELECTOR)
@@ -232,70 +176,17 @@ window.__ModuleLoader__.load({
       }
       return NodeFilter.FILTER_ACCEPT;
     }
-    function domWalk(root, fn) {
-      if (root.nodeType === 3) { if (!domShouldSkip(root)) fn(root); return; }
-      if (root.nodeType !== 1) return;
-      if (root.matches && root.matches(DOM_SKIP_SELECTOR)) return;
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: skipFilter });
-      let n;
-      while ((n = walker.nextNode())) fn(n);
-    }
-    function startDomConversion(activeId) {
-      if (domObserver) return;
-      try {
-        domOriginalLang = domOriginalLang ?? document.documentElement.lang;
-        document.documentElement.lang = activeId || "zh-TW";
-      } catch { /* 忽略 */ }
-      domWalk(document.body, domConvertText);
-      if (typeof MutationObserver !== "undefined") {
-        try {
-          domObserver = new MutationObserver((mutations) => {
-            scheduleDomWork(() => {
-              for (const m of mutations) {
-                if (m.type === "characterData") continue;
-                if (m.type === "childList") {
-                  for (const n of m.addedNodes) {
-                    if (n.nodeType === 3 && !domShouldSkip(n)) domConvertText(n);
-                    else if (n.nodeType === 1 && !domShouldSkip(n)) domWalk(n, domConvertText);
-                  }
-                }
-              }
-            });
-          });
-          domObserver.observe(document.body, { childList: true, subtree: true, characterData: false });
-        } catch { /* ignore */ }
-      }
-    }
-    function stopDomConversion() {
-      if (domRaf) {
-        if (typeof cancelAnimationFrame === "function") cancelAnimationFrame(domRaf);
-        else window.clearTimeout(domRaf);
-        domRaf = 0;
-        domQueued = null;
-      }
-      if (domObserver) {
-        domObserver.disconnect();
-        domObserver = null;
-      }
-      domWalk(document.body, domRestoreText);
-      try {
-        if (domOriginalLang !== null) document.documentElement.lang = domOriginalLang;
-      } catch { /* 忽略 */ }
-    }
     function syncDocumentLocale(active) {
       const lang = LANGUAGES.find((item) => item.id === active);
-      if (lang?.useConvert) startDomConversion(lang.id);
-      else stopDomConversion();
       try {
         document.documentElement.lang = lang?.id ?? document.documentElement.lang;
-        document.documentElement.dir = lang?.rtl ? "rtl" : "ltr";
       } catch { /* document may not be ready */ }
       if (mtRefresh) mtRefresh();
     }
 
-    // ---- 自動翻譯（LLM）----
-    // 任何已選嘅插件語言（包括 zh-HK / zh-TW）都會捉「長英文」DOM 文本走 LLM。
-    // 繁中同時保留簡→繁字元轉換。對話串流 / composer 唔行 characterData，避免卡 renderer。
+    // ---- Traduzione automatica (LLM) ----
+    // Con l'italiano attivo, il testo inglese lungo nel DOM passa dal modello.
+    // Conversazione in streaming / composer esclusi (niente characterData), per non bloccare il renderer.
     let mtRefresh = null;
 
     function apply(ctx) {
@@ -310,7 +201,7 @@ window.__ModuleLoader__.load({
 
       // 0) Register languages into the official catalog (Harness 0.1.5+).
       //    setLocale only accepts catalog ids; snapshot patching alone is not enough.
-      //    Traditional locales fall back to zh (then convert); others fall back to en.
+      //    Missing keys fall back to en.
       const languageDisposers = [];
       if (typeof locale.addLanguage === "function") {
         for (const lang of LANGUAGES) {
@@ -318,7 +209,7 @@ window.__ModuleLoader__.load({
             const dispose = locale.addLanguage({
               id: lang.id,
               label: lang.label,
-              fallback: lang.useConvert ? "zh" : "en",
+              fallback: "en",
             });
             if (typeof dispose === "function") languageDisposers.push(dispose);
           } catch (error) {
@@ -363,8 +254,7 @@ window.__ModuleLoader__.load({
         }
       }
 
-      // 1.5) Wrap translate: curated first (case-insensitive dict keys), then
-      //      zh→繁 convert for Traditional locales / English for others.
+      // 1.5) Wrap translate: curated first (case-insensitive dict keys), then English.
       const originalTranslate = locale.translate.bind(locale);
       locale.translate = (ns, key, params) => {
         const active = locale.getLocale().active;
@@ -375,14 +265,10 @@ window.__ModuleLoader__.load({
           dictLookup(dicts, ns, active, key) ??
           (ns !== "common" ? dictLookup(dicts, "common", active, key) : undefined);
         if (curated !== undefined) return applyParams(curated, params);
-        const fallbackLang = lang.useConvert ? "zh" : "en";
         const fallback =
-          dictLookup(dicts, ns, fallbackLang, key) ??
-          (ns !== "common" ? dictLookup(dicts, "common", fallbackLang, key) : undefined);
-        if (fallback !== undefined) {
-          const value = lang.useConvert ? convertZhTw(fallback) : fallback;
-          return applyParams(value, params);
-        }
+          dictLookup(dicts, ns, "en", key) ??
+          (ns !== "common" ? dictLookup(dicts, "common", "en", key) : undefined);
+        if (fallback !== undefined) return applyParams(fallback, params);
         return originalTranslate(ns, key, params);
       };
 
@@ -405,7 +291,7 @@ window.__ModuleLoader__.load({
       };
 
       // 3) Persist across Host adopt() resets (async settings load can clobber active).
-      //    Empty storage + exact browser tag (zh-HK) seeds the choice once.
+      //    Empty storage + exact browser tag (it) seeds the choice once.
       //    A stored built-in id (zh / en) is an explicit choice and is left alone.
       const activateIfPreferred = () => {
         let pref = readPref();
@@ -437,7 +323,7 @@ window.__ModuleLoader__.load({
         };
       }
 
-      // 4) Auto-translate English long text via /api/dsh-i18n.translate (non-Traditional locales).
+      // 4) Auto-translate English long text via /api/dsh-i18n.translate.
       const connection = (() => { try { return ctx.get("connection"); } catch { return null; } })();
       if (connection && connection.rpc && typeof connection.rpc.call === "function") {
         const MT_CONFIG_KEY = "dsh-i18n.mt";
@@ -542,7 +428,7 @@ window.__ModuleLoader__.load({
           else stopMt();
         };
       } else {
-        console.info("[dsh-i18n] connection.rpc unavailable; dictionary + convert only (no LLM auto-translate)");
+        console.info("[dsh-i18n] connection.rpc unavailable; dictionary only (no LLM auto-translate)");
       }
 
       activateIfPreferred();
