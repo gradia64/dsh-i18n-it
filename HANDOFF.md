@@ -14,7 +14,7 @@
 - DSH coverage: dictionaries extracted from **0.2.1-rc.3** (54 packages, 2910 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
 
 ## Next
-- Archive `gradia64/dsh-i18n` once the new package is confirmed working.
+- Nothing pending. On the next DSH release follow "Updating for a new DSH release" below.
 
 ## Updating for a new DSH release
 1. Install the new `@deepseek-ai/dsh` (`npm install --ignore-scripts`) somewhere outside the repo.
@@ -31,7 +31,7 @@ Steer→"Indirizza", Queue→"Accoda", job→"job", workspace→"spazio di lavor
 - Always pass `--profile` (read `%APPDATA%/DSH Desktop/profile-selection/state.json` `active`); the `web` shim installs into `web` and Desktop never loads it.
 - Community Market accepts only an exact published npm version; GitHub specs install only via `dsh plugin add`.
 - Isolated Host RPC times out at 120s if MCP servers stall; launch with `DSH_DESKTOP_ISOLATED_HOST=0` when that happens.
-- Earlier multi-locale history (0.1.x → 0.2.8-gradia.5) is in git log and in `gradia64/dsh-i18n`.
+- Earlier multi-locale history (0.1.x → 0.2.8-gradia.5) is in git log and in `gradia64/dsh-i18n` (archived 2026-10-26, read-only).
 
 ## 文件地圖
 | File | Read method | Purpose |
