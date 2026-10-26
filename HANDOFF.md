@@ -9,11 +9,11 @@
   - Internal ids unchanged on purpose: cordis id `dsh-i18n`, `/api/dsh-i18n.translate`, localStorage `dsh-i18n.preference` / `dsh-i18n.mt`, cache `~/.cache/dsh-i18n/`. The chosen language and the translation cache survive the switch; the old and new packages must not be installed together.
   - `lib/client.js`: 2.98 MB → 178 KB. npm pack: 8 files, 59.8 kB.
   - `scripts/pending-translation.json`: 6 entries, all intentional English (app name, URLs, example ids, protocol name).
-  - `npm test` EXIT=0 (verify:peers + i18n check + build + runtime harness). Not GUI-verified on Desktop.
+  - `npm test` EXIT=0 (verify:peers + i18n check + build + runtime harness).
+  - 2026-10-26: GUI-verified by the owner: `@gradia64/dsh-i18n` removed, `github:gradia64/dsh-i18n-it` installed on Desktop, Italian UI works.
 - DSH coverage: dictionaries extracted from **0.2.1-rc.3** (54 packages, 2910 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
 
 ## Next
-- Remove `@gradia64/dsh-i18n` from the active profile, install `github:gradia64/dsh-i18n-it`, restart, pick Italiano: GUI check.
 - Archive `gradia64/dsh-i18n` once the new package is confirmed working.
 
 ## Updating for a new DSH release
