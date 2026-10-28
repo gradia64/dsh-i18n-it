@@ -9,7 +9,7 @@
   - `verify-runtime.mjs` derives the expected key count from `src/en` and now drives auto-translate through a mock DOM, timers and RPC (translate, no self re-send, restore, cache reuse, in-flight dedup, bounded retry). The old bundle fails 5 of these checks.
   - `extract.mjs` warns about installed packages that call `locale.register` but are missing from `PKGS`.
   - `index.d.ts` declares `Config` (interface + schema) and `apply(ctx, config)`.
-  - `npm test` EXIT=0; host validation checked separately against the real `@deepseek-ai/schemastery` / `dsh-llm` (12 cases). Not GUI-verified.
+  - `npm test` EXIT=0; host validation checked separately against the real `@deepseek-ai/schemastery` / `dsh-llm` (12 cases). 2026-10-28: reinstalled on Desktop by the owner, works.
 - 2026-10-26: **Split from `gradia64/dsh-i18n` (branch `gradia-local` at `6d1b87c`) into `gradia64/dsh-i18n-it`, Italian only.** Package `@gradia64/dsh-i18n-it` `0.3.0`; git history kept. See DECISIONS 2026-10-26.
   - Removed: the 19 other locales in `src/`, the zh-HK/zh-TW Simplified→Traditional converter (`src/zh-tw-parts`, `fill-traditional`, `collect-chars`, `check-missing-chars`, `verify-converter`), the Simplified-residue gate, RTL handling, `verify-dicts.mjs`, `verify/` (Python checks), 20 translated READMEs, `registry-entry.yml`, `src/TERMINOLOGY.md` (zh-TW glossary).
   - Kept: `src/en` + `src/zh-src` (extraction baseline / en fallback), `src/it`, `extract.mjs`, `migrate-locales.mjs`, `check.mjs`, `verify-peers.mjs`, host `index.mjs` unchanged.
