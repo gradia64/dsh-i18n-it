@@ -60,7 +60,7 @@ node scripts/check.mjs --record-pending              # aggiorna l'elenco delle c
 npm test                                             # peer + controllo dizionario + build + test di runtime
 ```
 
-- `scripts/extract.mjs` legge un elenco fisso di pacchetti (`PKGS`): un pacchetto client nuovo va aggiunto a mano, altrimenti le sue stringhe non vengono estratte.
+- `scripts/extract.mjs` legge un elenco fisso di pacchetti (`PKGS`): un pacchetto client nuovo va aggiunto a mano. Lo script avvisa se trova pacchetti installati con dizionari che non sono nell'elenco.
 - `scripts/check.mjs` fallisce su file, namespace o chiavi mancanti, segnaposto `{…}` diversi dall'inglese e frasi inglesi di 3+ parole non tradotte (salvo quelle in `scripts/pending-translation.json`).
 - `lib/client.js` è generato da `scripts/assemble.mjs`: non modificarlo a mano.
 

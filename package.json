@@ -1,6 +1,6 @@
 {
   "name": "@gradia64/dsh-i18n-it",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Italian localization with automatic translation for the DeepSeek Harness Web UI",
   "type": "module",
   "main": "./index.mjs",

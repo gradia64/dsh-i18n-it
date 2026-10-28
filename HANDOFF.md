@@ -3,6 +3,13 @@
 # HANDOFF
 
 ## Current state
+- 2026-10-28: **0.3.1** — fixes from the old `report_GLM.md` review (4 Oct, written for the 20-locale repo; the rest of it no longer applies):
+  - Host (`index.mjs`): `/api/dsh-i18n.translate` rejects payloads over 48 texts, texts that are not non-empty strings ≤ 4000 chars, and `targetLang` that is not a non-empty string ≤ 64 chars (`invalidTranslatePayload`, exported). With `autoTranslate: false` it no longer coerces non-strings.
+  - Client auto-translate (`scripts/assemble.mjs`): each translated Text node remembers `{ original, translated }`; switching away from `it` restores the English text. Its own Italian output is no longer re-sent to the model (before, every re-walk sent it again and produced "IT:IT:…" chains). LRU cap of 1000 entries, no duplicate requests for texts in flight, failed texts retried twice after 2 s, post-response walk coalesced into one rAF.
+  - `verify-runtime.mjs` derives the expected key count from `src/en` and now drives auto-translate through a mock DOM, timers and RPC (translate, no self re-send, restore, cache reuse, in-flight dedup, bounded retry). The old bundle fails 5 of these checks.
+  - `extract.mjs` warns about installed packages that call `locale.register` but are missing from `PKGS`.
+  - `index.d.ts` declares `Config` (interface + schema) and `apply(ctx, config)`.
+  - `npm test` EXIT=0; host validation checked separately against the real `@deepseek-ai/schemastery` / `dsh-llm` (12 cases). Not GUI-verified.
 - 2026-10-26: **Split from `gradia64/dsh-i18n` (branch `gradia-local` at `6d1b87c`) into `gradia64/dsh-i18n-it`, Italian only.** Package `@gradia64/dsh-i18n-it` `0.3.0`; git history kept. See DECISIONS 2026-10-26.
   - Removed: the 19 other locales in `src/`, the zh-HK/zh-TW Simplified→Traditional converter (`src/zh-tw-parts`, `fill-traditional`, `collect-chars`, `check-missing-chars`, `verify-converter`), the Simplified-residue gate, RTL handling, `verify-dicts.mjs`, `verify/` (Python checks), 20 translated READMEs, `registry-entry.yml`, `src/TERMINOLOGY.md` (zh-TW glossary).
   - Kept: `src/en` + `src/zh-src` (extraction baseline / en fallback), `src/it`, `extract.mjs`, `migrate-locales.mjs`, `check.mjs`, `verify-peers.mjs`, host `index.mjs` unchanged.
@@ -18,9 +25,8 @@
 
 ## Updating for a new DSH release
 1. Install the new `@deepseek-ai/dsh` (`npm install --ignore-scripts`) somewhere outside the repo.
-2. Diff its `@deepseek-ai/*` list against `PKGS` in `scripts/extract.mjs`; add new client packages that call `locale.register`.
-3. `node scripts/extract.mjs <path>` → `node scripts/migrate-locales.mjs` → translate the new keys in `src/it/` → `node scripts/check.mjs --record-pending` → bump `EXPECTED_KEYS` in `scripts/verify-runtime.mjs` → `npm test`.
-4. Check `dsh-llm`, `dsh-client-locale`, `dsh-client-connection`, `dsh-app-boot` for API changes and that `DOM_SKIP_SELECTOR` attributes still exist upstream; widen `engines.dsh` / peers (and `verify-peers.mjs`) for a new minor line.
+2. `node scripts/extract.mjs <path>` (it warns about unlisted packages with dictionaries) → `node scripts/migrate-locales.mjs` → translate the new keys in `src/it/` → `node scripts/check.mjs --record-pending` → `npm test` (the expected key count follows `src/en`).
+3. Check `dsh-llm`, `dsh-client-locale`, `dsh-client-connection`, `dsh-app-boot` for API changes and that `DOM_SKIP_SELECTOR` attributes still exist upstream; widen `engines.dsh` / peers (and `verify-peers.mjs`) for a new minor line.
 
 ## Italian terminology
 Steer→"Indirizza", Queue→"Accoda", job→"job", workspace→"spazio di lavoro", preset→"preset", subagent→"subagente", Auto review→"Revisione automatica", Discover→"Scopri", plugin market→"marketplace di plugin", index source→"sorgente dell'indice", automation task→"attività automatica", reminder→"promemoria", registry→"registry", sidebar→"barra laterale", conversation view→"vista conversazione". Keep app/product names, URLs, slash-command tokens and units in English.

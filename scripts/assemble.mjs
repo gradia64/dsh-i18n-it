@@ -327,10 +327,32 @@ window.__ModuleLoader__.load({
       const connection = (() => { try { return ctx.get("connection"); } catch { return null; } })();
       if (connection && connection.rpc && typeof connection.rpc.call === "function") {
         const MT_CONFIG_KEY = "dsh-i18n.mt";
-        const translateCache = new Map();
-        const pendingTexts = new Set();
+        const MT_BATCH = 12;
+        const MT_CACHE_MAX = 1000;  // LRU: the Host keeps the persistent cache
+        const MT_MAX_RETRIES = 2;
+        const MT_RETRY_DELAY = 2000;
+        const translateCache = new Map(); // English text -> translation
+        const pendingTexts = new Set();   // queued, not yet sent
+        const inFlight = new Set();       // sent, waiting for the Host
+        const failures = new Map();       // text -> failed attempts
+        const mtApplied = new WeakMap();  // Text node -> { original, translated } we wrote into it
         let mtTimer = null;
         let mtObserver = null;
+        let mtWalkQueued = false;
+
+        const cacheGet = (text) => {
+          const value = translateCache.get(text);
+          if (value !== undefined) { translateCache.delete(text); translateCache.set(text, value); }
+          return value;
+        };
+        const cacheSet = (text, value) => {
+          translateCache.delete(text);
+          translateCache.set(text, value);
+          while (translateCache.size > MT_CACHE_MAX) translateCache.delete(translateCache.keys().next().value);
+        };
+        const scheduleFlush = (delay) => {
+          if (!mtTimer) mtTimer = window.setTimeout(flushMt, delay);
+        };
 
         const mtActiveLang = () => locale.getLocale().active;
         const mtIsTarget = (id) => Boolean(findLang(id));
@@ -348,15 +370,23 @@ window.__ModuleLoader__.load({
         const mtHandleNode = (node) => {
           if (node.nodeType !== 3 || mtSkip(node)) return;
           const text = node.nodeValue;
-          if (!text || !mtLooksTranslatable(text)) return;
-          const cached = translateCache.get(text);
+          if (!text) return;
+          // Already showing our translation: do not send the Italian text back to the model.
+          const applied = mtApplied.get(node);
+          if (applied !== undefined) {
+            if (applied.translated === text) return;
+            mtApplied.delete(node); // the app replaced the text; treat it as new content
+          }
+          if (!mtLooksTranslatable(text)) return;
+          const cached = cacheGet(text);
           if (cached !== undefined) {
-            if (node.nodeValue !== cached) node.nodeValue = cached;
+            mtApplied.set(node, { original: text, translated: cached });
+            node.nodeValue = cached;
             return;
           }
-          if (!pendingTexts.has(text)) {
+          if (!pendingTexts.has(text) && !inFlight.has(text)) {
             pendingTexts.add(text);
-            if (!mtTimer) mtTimer = window.setTimeout(flushMt, 250);
+            scheduleFlush(250);
           }
         };
         const mtWalk = (root) => {
@@ -367,12 +397,32 @@ window.__ModuleLoader__.load({
           let n;
           while ((n = walker.nextNode())) mtHandleNode(n);
         };
+        // Apply finished translations once per frame, however many batches arrive.
+        const scheduleMtWalk = () => {
+          if (mtWalkQueued) return;
+          mtWalkQueued = true;
+          scheduleDomWork(() => {
+            mtWalkQueued = false;
+            if (mtObserver) mtWalk(document.body);
+          });
+        };
+        // Failed texts are retried a few times, then dropped until the page shows them again.
+        const mtFailed = (texts) => {
+          let retry = false;
+          for (const t of texts) {
+            const n = (failures.get(t) || 0) + 1;
+            if (n > MT_MAX_RETRIES) { failures.delete(t); continue; }
+            failures.set(t, n);
+            if (mtObserver) { pendingTexts.add(t); retry = true; }
+          }
+          if (retry) scheduleFlush(MT_RETRY_DELAY);
+        };
         function flushMt() {
           mtTimer = null;
           if (!pendingTexts.size) return;
           if (!mtIsTarget(mtActiveLang())) { pendingTexts.clear(); return; }
-          const texts = [...pendingTexts].slice(0, 12);
-          for (const t of texts) pendingTexts.delete(t);
+          const texts = [...pendingTexts].slice(0, MT_BATCH);
+          for (const t of texts) { pendingTexts.delete(t); inFlight.add(t); }
           const targetLang = (findLang(mtActiveLang()) || {}).label;
           const cfg = (() => { try { return JSON.parse(window.localStorage.getItem(MT_CONFIG_KEY)) || {}; } catch { return {}; } })();
           const payload = { texts, targetLang };
@@ -381,24 +431,33 @@ window.__ModuleLoader__.load({
             payload.model = cfg.model;
             if (cfg.reasoningEffort) payload.reasoningEffort = cfg.reasoningEffort;
           }
-          connection.rpc.call("/api", "dsh-i18n.translate", payload).then((result) => {
-            if (!result || !result.ok) {
+          let call;
+          try {
+            call = Promise.resolve(connection.rpc.call("/api", "dsh-i18n.translate", payload));
+          } catch (error) {
+            call = Promise.reject(error);
+          }
+          call.then((result) => {
+            for (const t of texts) inFlight.delete(t);
+            const translations = result && result.ok && result.value && result.value.translations;
+            if (!Array.isArray(translations)) {
               const msg = result && result.error && result.error.message ? result.error.message : "translate failed";
               console.warn("[dsh-i18n] auto-translate:", msg);
+              mtFailed(texts);
               return;
             }
-            if (!mtIsTarget(mtActiveLang())) return;
-            const translations = result.value && result.value.translations;
-            if (!Array.isArray(translations)) return;
             texts.forEach((t, i) => {
+              failures.delete(t);
               const tr = translations[i];
-              if (typeof tr === "string" && tr && tr !== t) translateCache.set(t, tr);
+              if (typeof tr === "string" && tr && tr !== t) cacheSet(t, tr);
             });
-            mtWalk(document.body);
-          }).catch((error) => {
+            if (mtIsTarget(mtActiveLang())) scheduleMtWalk();
+          }, (error) => {
+            for (const t of texts) inFlight.delete(t);
             console.warn("[dsh-i18n] auto-translate rpc error:", error instanceof Error ? error.message : error);
+            mtFailed(texts);
           });
-          if (pendingTexts.size) mtTimer = window.setTimeout(flushMt, 250);
+          if (pendingTexts.size) scheduleFlush(250);
         }
         function startMt() {
           if (mtObserver) return;
@@ -418,10 +477,26 @@ window.__ModuleLoader__.load({
           });
           mtObserver.observe(document.body, { childList: true, subtree: true, characterData: false });
         }
+        // Put back the English text, so another language starts from the source
+        // instead of from the Italian translation.
+        function restoreMt(root) {
+          if (root.nodeType !== 1) return;
+          const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, { acceptNode: skipFilter });
+          let n;
+          while ((n = walker.nextNode())) {
+            const applied = mtApplied.get(n);
+            if (applied === undefined) continue;
+            if (n.nodeValue === applied.translated) n.nodeValue = applied.original;
+            mtApplied.delete(n);
+          }
+        }
         function stopMt() {
+          const wasRunning = Boolean(mtObserver);
           if (mtObserver) { mtObserver.disconnect(); mtObserver = null; }
           if (mtTimer) { window.clearTimeout(mtTimer); mtTimer = null; }
           pendingTexts.clear();
+          failures.clear();
+          if (wasRunning) restoreMt(document.body);
         }
         mtRefresh = () => {
           if (mtIsTarget(mtActiveLang())) startMt();

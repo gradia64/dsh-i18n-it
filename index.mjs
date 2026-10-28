@@ -19,6 +19,27 @@ const name = "dsh-i18n";
 const inject = ["llm"];
 const API_METHOD = "dsh-i18n.translate";
 
+// Limiti del payload di translate. Il client invia lotti di 12 testi da 24–2000
+// caratteri; l'endpoint però è raggiungibile da qualunque client o plugin, quindi
+// rifiuta richieste più grandi invece di passarle al modello e alla cache.
+const MAX_TEXTS = 48;
+const MAX_TEXT_LENGTH = 4000;
+const MAX_TARGET_LANG_LENGTH = 64;
+
+/** Restituisce il motivo del rifiuto, o null se il payload è valido. */
+function invalidTranslatePayload(payload) {
+  const { texts, targetLang } = payload || {};
+  if (!Array.isArray(texts) || texts.length === 0) return "texts must be a non-empty array";
+  if (texts.length > MAX_TEXTS) return `too many texts (max ${MAX_TEXTS})`;
+  if (!texts.every((t) => typeof t === "string" && t.length > 0 && t.length <= MAX_TEXT_LENGTH)) {
+    return `texts must be non-empty strings of at most ${MAX_TEXT_LENGTH} characters`;
+  }
+  if (typeof targetLang !== "string" || targetLang.length === 0 || targetLang.length > MAX_TARGET_LANG_LENGTH) {
+    return `targetLang must be a non-empty string of at most ${MAX_TARGET_LANG_LENGTH} characters`;
+  }
+  return null;
+}
+
 // --- gradia-local: config, reasoning off di default, cache persistente -----
 //
 // autoTranslate: false  → nessuna chiamata al modello; il testo resta in inglese.
@@ -191,12 +212,11 @@ function apply(ctx, config = Config({})) {
     const handler = async (endpoint, payload, signal) => {
       try {
         if (endpoint !== "translate") return failure(new Error("unknown endpoint " + endpoint));
-        const { texts, targetLang } = payload || {};
-        if (!Array.isArray(texts) || texts.length === 0 || typeof targetLang !== "string") {
-          return failure(new Error("invalid translate payload"));
-        }
+        const invalid = invalidTranslatePayload(payload);
+        if (invalid) return failure(new Error("invalid translate payload: " + invalid));
+        const { texts, targetLang } = payload;
         // Auto-traduzione spenta: rispondi con il testo originale, zero chiamate al modello.
-        if (!config.autoTranslate) return ok({ translations: texts.map(String) });
+        if (!config.autoTranslate) return ok({ translations: [...texts] });
         const route = resolveModelRoute(ctx, payload);
         if (!route || !route.provider || !route.model) {
           try { connectionCtx.logger?.warn?.("[dsh-i18n] no model route for auto-translate"); } catch { /* ignore */ }
@@ -257,4 +277,4 @@ function apply(ctx, config = Config({})) {
   });
 }
 
-export { apply, Config, inject, name, createTranslationCache, translateWithCache };
+export { apply, Config, inject, name, createTranslationCache, invalidTranslatePayload, translateWithCache };

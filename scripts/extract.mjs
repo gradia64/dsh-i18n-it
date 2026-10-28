@@ -520,3 +520,16 @@ for (const pkg of PKGS) {
 
 console.log(JSON.stringify(report, null, 2));
 console.log("TOTAL zh keys:", totalKeys);
+
+// PKGS is a hand-written allowlist: a client package left out is silently not extracted.
+// List installed packages whose client bundle registers locale dictionaries but are not in PKGS.
+const unlisted = fs.readdirSync(root).filter((dir) => {
+  if (PKGS.includes(dir)) return false;
+  const file = path.join(root, dir, "lib", "client.js");
+  return fs.existsSync(file) && /(?:ctx\.)?locale\.register\s*\(/.test(fs.readFileSync(file, "utf8"));
+});
+if (unlisted.length) {
+  console.warn(`WARNING: ${unlisted.length} package(s) register locale dictionaries but are not in PKGS:`);
+  for (const dir of unlisted) console.warn("  " + dir);
+  console.warn("Add them to PKGS in scripts/extract.mjs if their strings should be translated.");
+}
