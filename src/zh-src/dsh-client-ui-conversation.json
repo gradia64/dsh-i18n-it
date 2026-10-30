@@ -74,7 +74,6 @@
         "hero.chooseWorkspace": "选择工作区",
         "session.hierarchy": "会话层级",
         "session.moreViews": "更多会话视图",
-        "session.moreViewsCurrent": "更多会话视图 · {name}",
         "todo.title": "任务",
         "todo.progress.done": "{done} 已完成",
         "todo.progress.active": "{active} 进行中",

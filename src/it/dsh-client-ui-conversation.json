@@ -74,7 +74,6 @@
         "hero.chooseWorkspace": "Scegli lo spazio di lavoro",
         "session.hierarchy": "Gerarchia della sessione",
         "session.moreViews": "Altre viste della conversazione",
-        "session.moreViewsCurrent": "Altre viste della conversazione · {name}",
         "todo.title": "Cose da fare",
         "todo.progress.done": "{done} completato",
         "todo.progress.active": "{active} in corso",

@@ -18,7 +18,10 @@
   - `scripts/pending-translation.json`: 6 entries, all intentional English (app name, URLs, example ids, protocol name).
   - `npm test` EXIT=0 (verify:peers + i18n check + build + runtime harness).
   - 2026-10-26: GUI-verified by the owner: `@gradia64/dsh-i18n` removed, `github:gradia64/dsh-i18n-it` installed on Desktop, Italian UI works.
-- DSH coverage: dictionaries extracted from **0.2.1-rc.3** (54 packages, 2910 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
+- 2026-10-30: **Re-extracted from DSH 0.2.1-rc.5.** Only change: `conversation` key `session.moreViewsCurrent` removed (2910 → 2909). No new or changed strings. The 15 new `@deepseek-ai/*` packages have no zh dictionaries, so `PKGS` is unchanged. `dsh-llm`, `dsh-client-locale`, `dsh-client-connection` and `dsh-app-boot` are byte-identical to rc.3. `npm test` EXIT=0. Not yet checked on Desktop.
+  - `DOM_SKIP_SELECTOR`: `data-team-id`, `data-recovery`, `data-renderer-recovery`, `data-boot-recovery` are not found in the npm packages, and they were not there in rc.3 either. Left as they are.
+  - `migrate-locales.mjs` writes files without a trailing newline and still prints the removed `fill-traditional` step. Add the newline back by hand.
+- DSH coverage: dictionaries extracted from **0.2.1-rc.5** (54 packages, 2909 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
 
 ## Next
 - Nothing pending. On the next DSH release follow "Updating for a new DSH release" below.
