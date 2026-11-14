@@ -1,0 +1,35 @@
+{
+  "pkg": "dsh-client-ui-plugin-recommendations",
+  "entries": [
+    {
+      "ns": "pluginRecommendations",
+      "dict": {
+        "heading": "Plugin consigliato",
+        "official": "Ufficiale",
+        "detailsFor": "Visualizza dettagli: {title}",
+        "version-error": "Questo plugin non è compatibile con questa versione di DSH. Aggiorna DSH e riprova.",
+        "management-error": "Impossibile abilitare il plugin. Apri i dettagli per controllare l'errore e riprova.",
+        "enable": "Abilita",
+        "dismiss": "Non ora",
+        "working": "In corso…",
+        "scope": "Disponibile in tutte le conversazioni quando è abilitato",
+        "enabled": "Abilitato",
+        "already-enabled": "Già selezionato in Plugin. Apri i dettagli per controllarne lo stato di esecuzione.",
+        "dismissed": "Ignorato",
+        "replaced": "Sostituito",
+        "restart-required": "Salvato. Riavvia DSH per applicare.",
+        "failed": "Impossibile abilitare. Riprova o controlla Plugin.",
+        "retry": "Riprova ad abilitare",
+        "unconfirmed": "Impossibile confermare se il plugin è stato abilitato. Riprova per controllare.",
+        "lookup-failed": "Impossibile caricare i dettagli di questo plugin. Riprova.",
+        "retryLookup": "Riprova",
+        "unavailable": "Questo plugin non può essere abilitato ora. Controlla Plugin.",
+        "unknown": "Questo suggerimento non è disponibile. Riapri la conversazione.",
+        "access-denied": "Non hai il permesso di modificare questo profilo.",
+        "not-live-root": "Usa questo suggerimento nella sua conversazione originale.",
+        "closing": "Il servizio si sta ricaricando. Riprova tra poco.",
+        "transport": "Impossibile confermare il risultato. Aggiorna e riprova."
+      }
+    }
+  ]
+}

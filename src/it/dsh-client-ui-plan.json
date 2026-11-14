@@ -14,7 +14,6 @@
         "preview.loading": "Caricamento del piano…",
         "preview.failed": "Impossibile caricare il piano",
         "preview.invalidAddress": "Indirizzo del piano non valido",
-        "preview.historyUnavailable": "La cronologia della sessione non è disponibile",
         "preview.notFound": "Piano non trovato",
         "preview.unavailable": "L'anteprima del piano non è disponibile",
         "preview.expired": "Questa anteprima temporanea del piano è scaduta. Riaprila dalla scheda di revisione in sospeso.",

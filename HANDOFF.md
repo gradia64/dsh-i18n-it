@@ -3,6 +3,14 @@
 # HANDOFF
 
 ## Current state
+- 2026-11-14: **0.4.0 — re-extracted from DSH 0.2.2-rc.2.** 65 packages, 4223 keys (was 54 / 2909): 1396 new keys translated, 72 changed English strings re-translated, 82 removed.
+  - `extract.mjs`: 0.2.2-rc.2 bundles are minified. It now accepts backtick strings (consts, namespace args, `dictionaries` arrays) and `register(NS, someConst)` where the const is `{ zh: ..., en: ... }`.
+  - `PKGS`: +13 packages (`account-notifications`, `action-cards`, `agent-team`, `context-menu`, `creation-recommendations`, `file-actions`, `file-drag`, `plugin-recommendations`, `dsh-cua`, `experimental-client-ui-forge`, `experimental-client-ui-stats`, `experimental-liveshare`, `dsh-message-quotes`); −2 (`deepseek-model-label-1017` removed upstream; `dsh-experimental-client-ui-agent-team` renamed to `dsh-client-ui-agent-team`, `src/it` file moved with git so the translations carried over).
+  - Peers: `dsh-client-locale` / `dsh-llm` got a `>=0.2.2-rc.1 <0.3.0-0` branch (the 0.2.1 branch now ends at `<0.2.2`); `verify-peers.mjs` checks it. `engines.dsh` unchanged.
+  - Upstream bundles now carry ja/es/fr/de/ru/pt dictionaries in some packages, but built-in languages are still only zh/en. The locale service methods the client uses (`addLanguage`, `register`, `adopt`, `publish`, `setLocale`, `translate`, `getLocale`, `dicts`) are still there.
+  - Upstream renames reflected in Italian: reminders → "attività automatiche", plugin market → "indice di plugin", Agent Team panel → "bacheca delle attività"; forge "change request" → "richiesta di modifica", liveshare fork/branch → "dirama/diramazione".
+  - `migrate-locales.mjs` still writes no trailing newline (added by hand); the stale `fill-traditional` hint is gone.
+  - `npm test` EXIT=0. **Not yet checked on Desktop / in a running DSH 0.2.2-rc.2.**
 - 2026-10-28: **0.3.1** — fixes from the old `report_GLM.md` review (4 Oct, written for the 20-locale repo; the rest of it no longer applies):
   - Host (`index.mjs`): `/api/dsh-i18n.translate` rejects payloads over 48 texts, texts that are not non-empty strings ≤ 4000 chars, and `targetLang` that is not a non-empty string ≤ 64 chars (`invalidTranslatePayload`, exported). With `autoTranslate: false` it no longer coerces non-strings.
   - Client auto-translate (`scripts/assemble.mjs`): each translated Text node remembers `{ original, translated }`; switching away from `it` restores the English text. Its own Italian output is no longer re-sent to the model (before, every re-walk sent it again and produced "IT:IT:…" chains). LRU cap of 1000 entries, no duplicate requests for texts in flight, failed texts retried twice after 2 s, post-response walk coalesced into one rAF.
@@ -21,7 +29,7 @@
 - 2026-10-30: **Re-extracted from DSH 0.2.1-rc.5.** Only change: `conversation` key `session.moreViewsCurrent` removed (2910 → 2909). No new or changed strings. The 15 new `@deepseek-ai/*` packages have no zh dictionaries, so `PKGS` is unchanged. `dsh-llm`, `dsh-client-locale`, `dsh-client-connection` and `dsh-app-boot` are byte-identical to rc.3. `npm test` EXIT=0. Not yet checked on Desktop.
   - `DOM_SKIP_SELECTOR`: `data-team-id`, `data-recovery`, `data-renderer-recovery`, `data-boot-recovery` are not found in the npm packages, and they were not there in rc.3 either. Left as they are.
   - `migrate-locales.mjs` writes files without a trailing newline and still prints the removed `fill-traditional` step. Add the newline back by hand.
-- DSH coverage: dictionaries extracted from **0.2.1-rc.5** (54 packages, 2909 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
+- DSH coverage: dictionaries extracted from **0.2.2-rc.2** (65 packages, 4223 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
 
 ## Next
 - Nothing pending. On the next DSH release follow "Updating for a new DSH release" below.
@@ -32,7 +40,7 @@
 3. Check `dsh-llm`, `dsh-client-locale`, `dsh-client-connection`, `dsh-app-boot` for API changes and that `DOM_SKIP_SELECTOR` attributes still exist upstream; widen `engines.dsh` / peers (and `verify-peers.mjs`) for a new minor line.
 
 ## Italian terminology
-Steer→"Indirizza", Queue→"Accoda", job→"job", workspace→"spazio di lavoro", preset→"preset", subagent→"subagente", Auto review→"Revisione automatica", Discover→"Scopri", plugin market→"marketplace di plugin", index source→"sorgente dell'indice", automation task→"attività automatica", reminder→"promemoria", registry→"registry", sidebar→"barra laterale", conversation view→"vista conversazione". Keep app/product names, URLs, slash-command tokens and units in English.
+Steer→"Indirizza", Queue→"Accoda", job→"job", workspace→"spazio di lavoro", change request→"richiesta di modifica", plugin index→"indice di plugin", task board→"bacheca delle attività", fork (session/subagent)→"dirama", preset→"preset", subagent→"subagente", Auto review→"Revisione automatica", Discover→"Scopri", plugin market→"marketplace di plugin", index source→"sorgente dell'indice", automation task→"attività automatica", reminder→"promemoria", registry→"registry", sidebar→"barra laterale", conversation view→"vista conversazione". Keep app/product names, URLs, slash-command tokens and units in English.
 
 ## Gotchas
 - `__ModuleLoader__.load({ id })` must equal `package.json` name; `assemble.mjs` derives it and `verify-runtime.mjs` checks it. `cordis.patch.yml` `name` must be changed by hand on a rename.

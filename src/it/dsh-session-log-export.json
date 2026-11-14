@@ -4,11 +4,15 @@
     {
       "ns": "session-log-download",
       "dict": {
-        "header.more": "Altre azioni",
+        "menu.copyMarkdown": "Copia la Sessione come Markdown",
         "menu.download": "Scarica il log della sessione",
         "menu.feedback": "Feedback",
+        "toast.copied": "Sessione copiata come Markdown.",
+        "toast.preparationFailed": "Impossibile leggere la Sessione per la copia. Riprova.",
+        "toast.clipboardFailed": "Impossibile scrivere negli appunti. Controlla il permesso degli appunti e riprova.",
+        "dialog.session": "Sessione: {sessionId}",
         "dialog.preparingTitle": "Esportazione della sessione",
-        "dialog.preparingDescription": "Preparazione di una ZIP contenente questa Sessione, le sue sotto-Sessioni e gli allegati.",
+        "dialog.preparingDescription": "Preparazione di una ZIP contenente la Sessione selezionata, le sue sotto-Sessioni e gli allegati.",
         "dialog.successTitle": "Download della sessione avviato",
         "dialog.successDescription": "Il browser sta scaricando lo ZIP della sessione.",
         "dialog.errorTitle": "Esportazione della sessione non riuscita",

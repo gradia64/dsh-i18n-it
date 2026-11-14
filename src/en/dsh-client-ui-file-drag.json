@@ -1,0 +1,11 @@
+{
+  "pkg": "dsh-client-ui-file-drag",
+  "entries": [
+    {
+      "ns": "fileDrag",
+      "dict": {
+        "failed": "Drag failed. Try again."
+      }
+    }
+  ]
+}

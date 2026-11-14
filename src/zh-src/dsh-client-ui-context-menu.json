@@ -1,0 +1,12 @@
+{
+  "pkg": "dsh-client-ui-context-menu",
+  "entries": [
+    {
+      "ns": "contextMenu",
+      "dict": {
+        "back": "返回",
+        "failed": "操作失败，请重试"
+      }
+    }
+  ]
+}

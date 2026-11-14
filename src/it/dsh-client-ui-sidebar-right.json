@@ -4,6 +4,9 @@
     {
       "ns": "sidebarRight",
       "dict": {
+        "menu.close": "Chiudi",
+        "menu.closeOthers": "Chiudi le altre schede",
+        "menu.closeRight": "Chiudi le schede a destra",
         "command.close": "Chiudi la pagina o la finestra corrente",
         "command.refresh": "Aggiorna la pagina corrente",
         "command.noRefresh": "Questa pagina non può essere aggiornata",

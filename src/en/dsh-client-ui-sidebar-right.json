@@ -4,6 +4,9 @@
     {
       "ns": "sidebarRight",
       "dict": {
+        "menu.close": "Close",
+        "menu.closeOthers": "Close Other Tabs",
+        "menu.closeRight": "Close Tabs to the Right",
         "command.close": "Close current page or window",
         "command.refresh": "Refresh current page",
         "command.noRefresh": "This page cannot be refreshed",

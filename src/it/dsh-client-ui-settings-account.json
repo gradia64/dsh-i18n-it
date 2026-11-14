@@ -96,8 +96,7 @@
         "topUp": "Ricarica",
         "quotaTitle": "Nessun saldo disponibile",
         "quotaDescription": "Senza saldo disponibile DeepSeek Harness non può avviare una nuova attività con questo account. Vuoi ricaricare? Puoi farlo anche più tardi in Impostazioni → Account.",
-        "quotaTopUp": "Ricarica",
-        "bonusNoticeTitle": "Bonus accreditato"
+        "quotaTopUp": "Ricarica"
       }
     }
   ]

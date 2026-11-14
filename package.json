@@ -1,6 +1,6 @@
 {
   "name": "@gradia64/dsh-i18n-it",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Italian localization with automatic translation for the DeepSeek Harness Web UI",
   "type": "module",
   "main": "./index.mjs",
@@ -51,8 +51,8 @@
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-client-locale": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.2.0-0 || >=0.2.0-rc.1 <0.2.1 || >=0.2.1-rc.1 <0.3.0-0",
-    "@deepseek-ai/dsh-llm": ">=0.1.0-rc.2 <0.1.1 || >=0.1.1-rc.1 <0.2.0-0 || >=0.2.0-rc.1 <0.2.1 || >=0.2.1-rc.1 <0.3.0-0",
+    "@deepseek-ai/dsh-client-locale": ">=0.1.0-rc.6 <0.1.1 || >=0.1.1-rc.1 <0.2.0-0 || >=0.2.0-rc.1 <0.2.1 || >=0.2.1-rc.1 <0.2.2 || >=0.2.2-rc.1 <0.3.0-0",
+    "@deepseek-ai/dsh-llm": ">=0.1.0-rc.2 <0.1.1 || >=0.1.1-rc.1 <0.2.0-0 || >=0.2.0-rc.1 <0.2.1 || >=0.2.1-rc.1 <0.2.2 || >=0.2.2-rc.1 <0.3.0-0",
     "@deepseek-ai/schemastery": "*"
   },
   "keywords": [

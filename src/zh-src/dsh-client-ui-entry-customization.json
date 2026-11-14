@@ -4,6 +4,8 @@
     {
       "ns": "entryCustomization",
       "dict": {
+        "pinTooltip": "固定到左侧栏",
+        "pin": "将{name}固定到侧边栏",
         "install": "浏览更多插件",
         "create": "创建你的插件",
         "createPrompt.sidebar": "创建一个带左侧栏入口的 DSH 插件。",

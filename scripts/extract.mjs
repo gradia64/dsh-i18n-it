@@ -21,7 +21,9 @@ const candidates = [
 const root = candidates.find((candidate) => fs.existsSync(path.join(candidate, "dsh-client-locale", "lib", "client.js")));
 if (!root) throw new Error(`No installed DSH locale packages found under: ${path.resolve(installed)}`);
 
-// DSH 0.2.0-rc.2: new packages added since the 0.1.1-rc line. Re-run against 0.2.1-rc.2 and 0.2.1-rc.3.
+// DSH 0.2.0-rc.2: new packages added since the 0.1.1-rc line. Re-run against 0.2.1-rc.2, 0.2.1-rc.3 and 0.2.2-rc.2.
+// 0.2.2-rc.2 ships minified bundles (backtick strings, register(NS, dictionariesConst)); it dropped
+// dsh-client-ui-deepseek-model-label-1017 and renamed dsh-experimental-client-ui-agent-team to dsh-client-ui-agent-team.
 const PKGS = [
   "dsh-client-locale",
   "dsh-client-ui-cordis",
@@ -72,13 +74,25 @@ const PKGS = [
   "dsh-client-ui-subagent",
   "dsh-client-ui-settings-subagent",
   "dsh-client-ui-secret-mask",
-  "dsh-client-ui-deepseek-model-label-1017",
   "dsh-experimental-client-ui-voice-input",
   "dsh-experimental-client-ui-cot-translation",
-  "dsh-experimental-client-ui-agent-team",
   "dsh-experimental-session-inspector",
   // DSH 0.2.1-rc.3
   "dsh-client-ui-entry-customization",
+  // DSH 0.2.2-rc.2
+  "dsh-client-ui-account-notifications",
+  "dsh-client-ui-action-cards",
+  "dsh-client-ui-agent-team",
+  "dsh-client-ui-context-menu",
+  "dsh-client-ui-creation-recommendations",
+  "dsh-client-ui-file-actions",
+  "dsh-client-ui-file-drag",
+  "dsh-client-ui-plugin-recommendations",
+  "dsh-cua",
+  "dsh-experimental-client-ui-forge",
+  "dsh-experimental-client-ui-stats",
+  "dsh-experimental-liveshare",
+  "dsh-message-quotes",
 ];
 
 // ---------- 小工具 ----------
@@ -114,7 +128,7 @@ function extractConsts(text) {
   while ((m = re.exec(text)) !== null) {
     const name = m[1];
     let i = re.lastIndex;
-    if (text[i] === '"' || text[i] === "'") {
+    if (text[i] === '"' || text[i] === "'" || text[i] === "`") {
       const quote = text[i];
       let j = i + 1;
       while (j < text.length) {
@@ -199,7 +213,7 @@ function resolveIdentifiers(literal, constMap, text, seen = new Set()) {
       }
       let isMember = false;
       if (literal[k] === "." && k + 1 < literal.length && isIdentStart(literal[k + 1])) isMember = true;
-      else if (literal[k] === "[" && (literal[k + 1] === '"' || literal[k + 1] === "'")) isMember = true;
+      else if (literal[k] === "[" && (literal[k + 1] === '"' || literal[k + 1] === "'" || literal[k + 1] === "`")) isMember = true;
 
       if (isMember && !seen.has(name)) {
         // 解析成员访问链
@@ -226,7 +240,7 @@ function resolveIdentifiers(literal, constMap, text, seen = new Set()) {
               } else if (literal[cursor] === "[") {
                 cursor++;
                 while (cursor < literal.length && /\s/.test(literal[cursor])) cursor++;
-                if (literal[cursor] !== '"' && literal[cursor] !== "'") { ok = false; break; }
+                if (literal[cursor] !== '"' && literal[cursor] !== "'" && literal[cursor] !== "`") { ok = false; break; }
                 const quote = literal[cursor];
                 let mj = cursor + 1;
                 while (mj < literal.length) {
@@ -258,7 +272,7 @@ function resolveIdentifiers(literal, constMap, text, seen = new Set()) {
       if (constMap.has(name) && !seen.has(name)) {
         const raw = resolveConstValue(constMap, text, name);
         if (raw !== undefined) {
-          if (raw.startsWith('"') || raw.startsWith("'")) {
+          if (raw.startsWith('"') || raw.startsWith("'") || raw.startsWith("`")) {
             out += raw;
           } else {
             out += resolveIdentifiers(raw, constMap, text, new Set([...seen, name]));
@@ -328,11 +342,11 @@ function findMatchingParen(text, openIdx) {
 
 function parseNsArg(arg, constMap, text) {
   arg = arg.trim();
-  if (arg.startsWith('"') || arg.startsWith("'")) {
+  if (arg.startsWith('"') || arg.startsWith("'") || arg.startsWith("`")) {
     try { return JSON.parse(arg); } catch { return arg.slice(1, -1); }
   }
   const raw = resolveConstValue(constMap, text, arg);
-  if (raw !== undefined && (raw.startsWith('"') || raw.startsWith("'"))) {
+  if (raw !== undefined && (raw.startsWith('"') || raw.startsWith("'") || raw.startsWith("`"))) {
     try { return JSON.parse(raw); } catch { return raw.slice(1, -1); }
   }
   return arg; // 未解析的标识符（如 locale 循环变量）
@@ -445,8 +459,12 @@ for (const pkg of PKGS) {
     let ns = parseNsArg(args[0], constMap, text);
     if (typeof ns !== "string" || ns === "locale") continue; // 循环变量
     let zhDict = null, enDict = null;
-    const second = args[1].trim();
-    if (second.startsWith('"') || second.startsWith("'")) {
+    let second = args[1].trim();
+    if (/^[A-Za-z_$][\w$]*$/.test(second)) {
+      const rawSecond = resolveConstValue(constMap, text, second);
+      if (rawSecond && rawSecond.startsWith("{")) second = rawSecond;
+    }
+    if (second.startsWith('"') || second.startsWith("'") || second.startsWith("`")) {
       // register(NS, "zh"/"en", {...})
       const localeName = parseNsArg(second, constMap, text);
       if (args[2]) {
@@ -497,10 +515,10 @@ for (const pkg of PKGS) {
   if (dictArrM && !seenNs.has("directory-picker")) {
     // 尝试找 LOCALE_NS 的值
     let ns = "directory-picker";
-    const nsConst = /const\s+LOCALE_NS\s*=\s*"([^"]+)"/.exec(text);
+    const nsConst = /const\s+LOCALE_NS\s*=\s*["`]([^"`]+)["`]/.exec(text);
     if (nsConst) ns = nsConst[1];
-    const zhMatch = dictArrM[1].match(/\[\s*"zh"\s*,\s*(\{[^]*?\})\s*\]/);
-    const enMatch = dictArrM[1].match(/\[\s*"en"\s*,\s*(\{[^]*?\})\s*\]/);
+    const zhMatch = dictArrM[1].match(/\[\s*["`]zh["`]\s*,\s*(\{[^]*?\})\s*\]/);
+    const enMatch = dictArrM[1].match(/\[\s*["`]en["`]\s*,\s*(\{[^]*?\})\s*\]/);
     const dict = { zh: zhMatch ? evalObject(zhMatch[1], constMap, text) : null, en: enMatch ? evalObject(enMatch[1], constMap, text) : null };
     if (dict.zh !== null || dict.en !== null) {
       try { entries.push({ ns, zh: dict.zh, en: dict.en }); seenNs.add(ns); }

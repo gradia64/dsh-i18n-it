@@ -7,7 +7,7 @@
         "provider": "Servizio di traduzione",
         "google": "Google",
         "bing": "Bing",
-        "deepseekAccount": "DeepSeek Flash — Account (a pagamento)",
+        "deepseekAccount": "DeepSeek Flash — account (a pagamento)",
         "deepseekOfficial": "DeepSeek Flash — API ufficiale (a pagamento)",
         "providerUnavailableOption": "{provider} — non disponibile",
         "providerUnavailable": "Questo provider non è disponibile. Configura il tuo account DeepSeek o il provider dell'API ufficiale, oppure scegli un servizio disponibile.",

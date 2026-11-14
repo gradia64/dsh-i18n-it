@@ -96,8 +96,7 @@
         "topUp": "充值",
         "quotaTitle": "当前无可用余额",
         "quotaDescription": "没有可用额度时，DeepSeek Harness 无法开始新的任务，是否前往充值？或者可以稍后前往 设置 → 账号与余额 进行充值。",
-        "quotaTopUp": "去充值",
-        "bonusNoticeTitle": "赠金已到账"
+        "quotaTopUp": "去充值"
       }
     }
   ]

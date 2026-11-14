@@ -4,8 +4,6 @@
     {
       "ns": "job",
       "dict": {
-        "count.live.one": "{count} lavoro IN background IN esecuzione",
-        "count.live.other": "Processi in background {count} in esecuzione",
         "count.idle.one": "{count} lavoro IN background",
         "count.idle.other": "{count} job in background",
         "list.aria": "Job in background",

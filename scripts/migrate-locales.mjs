@@ -99,6 +99,5 @@ console.log(`  Added ${addedFiles} new package files`);
 console.log(`  Merged ${mergedFiles} existing package files`);
 console.log(`  Added ${addedKeys} new keys (English placeholders, pending translation)`);
 console.log("Next steps:");
-console.log("  node scripts/fill-traditional.mjs        # zh-HK/zh-TW: fill from zh-src via the converter, not English");
 console.log("  node scripts/check.mjs --record-pending  # list the remaining English placeholders");
 console.log(`  Removed ${staleKeys} stale keys`);

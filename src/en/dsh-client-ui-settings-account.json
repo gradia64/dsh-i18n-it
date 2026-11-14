@@ -96,8 +96,7 @@
         "topUp": "Top up",
         "quotaTitle": "No balance available",
         "quotaDescription": "DeepSeek Harness cannot start a new task with this account when no balance is available. Would you like to top up? You can also top up later in Settings → Account.",
-        "quotaTopUp": "Top up",
-        "bonusNoticeTitle": "Bonus credited"
+        "quotaTopUp": "Top up"
       }
     }
   ]

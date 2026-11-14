@@ -4,12 +4,16 @@
     {
       "ns": "sidebar",
       "dict": {
+        "panels.unpinTooltip": "从左侧栏取消固定",
+        "panels.unpin": "从侧边栏取消固定{name}",
         "session.new": "新会话",
         "session.new.label": "新建会话",
         "toggle.open": "打开侧边栏",
         "toggle.collapse": "收起侧边栏",
         "panels.label": "全局面板",
-        "panels.more": "更多"
+        "navigation.label": "导航",
+        "panels.more": "更多",
+        "version.copied": "版本号复制成功"
       }
     }
   ]

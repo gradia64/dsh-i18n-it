@@ -4,12 +4,16 @@
     {
       "ns": "sidebar",
       "dict": {
+        "panels.unpinTooltip": "Rimuovi dalla barra laterale sinistra",
+        "panels.unpin": "Rimuovi {name} dalla barra laterale",
         "session.new": "Nuova sessione",
         "session.new.label": "Nuova sessione",
         "toggle.open": "Apri barra laterale",
         "toggle.collapse": "Comprimi la barra laterale",
         "panels.label": "Pannelli globali",
-        "panels.more": "Altro"
+        "navigation.label": "Navigazione",
+        "panels.more": "Altro",
+        "version.copied": "Versione copiata"
       }
     }
   ]

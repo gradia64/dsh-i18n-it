@@ -1,0 +1,22 @@
+{
+  "pkg": "dsh-client-ui-file-actions",
+  "entries": [
+    {
+      "ns": "fileActions",
+      "dict": {
+        "menu.finder": "Mostra nel Finder",
+        "menu.reveal": "Mostra nella cartella",
+        "menu.saveAs": "Salva con nome…",
+        "menu.copied": "Copiato",
+        "menu.copyImage": "Copia immagine",
+        "menu.download": "Scarica",
+        "menu.saveFailed": "Impossibile salvare. Controlla origine e destinazione, poi riprova.",
+        "menu.copyFailed": "Impossibile copiare. Controlla che il contenuto sia disponibile, poi riprova.",
+        "menu.saved": "Salvato",
+        "menu.downloadStarted": "Download avviato",
+        "menu.downloaded": "Download completato",
+        "path.revealError": "Impossibile mostrare la posizione del file. Riprova."
+      }
+    }
+  ]
+}

@@ -4,6 +4,12 @@
     {
       "ns": "subagent",
       "dict": {
+        "section.title": "子智能体",
+        "section.empty": "暂无子智能体",
+        "progress.completed": "{count} 已完成",
+        "progress.active": "{count} 进行中",
+        "progress.inactive": "{count} 未运行",
+        "progress.external": "{count} 外部任务",
         "duration.seconds": "{seconds}秒",
         "duration.minutes": "{minutes}分{seconds}秒",
         "duration.hours": "{hours}小时{minutes}分{seconds}秒",
@@ -19,8 +25,8 @@
         "tokens.million": "{value}M",
         "tokens.total": "{value} tok",
         "loading.label": "正在加载子智能体…",
+        "load.idle": "尚未加载子智能体",
         "load.error": "无法加载子智能体",
-        "catalog.migrationRequired": "需要迁移",
         "retry": "重试",
         "mode.external": "外部任务",
         "mode.oneShot": "一次性",
@@ -39,12 +45,12 @@
         "switcher.aria": "切换子智能体：{title}",
         "tree.aria": "子智能体会话",
         "open.sidebar": "在侧边栏打开",
+        "open.floatWindow": "在浮窗中打开",
         "open.sidebar.aria": "在侧边栏打开 {label}",
         "sidebar.chat": "聊天",
         "readonly.oneShot.title": "一次性子智能体记录",
         "readonly.title": "此子智能体暂时只读",
-        "readonly.oneShot.body": "一次性任务不支持后续消息，可在这里查看完整执行记录。",
-        "readonly.body": "父会话当前不在线，重新打开父会话后即可继续发送消息。"
+        "readonly.oneShot.body": "一次性任务不支持后续消息，可在这里查看完整执行记录。"
       }
     }
   ]

@@ -14,7 +14,6 @@
         "preview.loading": "Loading plan…",
         "preview.failed": "Could not load plan",
         "preview.invalidAddress": "Invalid plan address",
-        "preview.historyUnavailable": "Session history is unavailable",
         "preview.notFound": "This plan was not found",
         "preview.unavailable": "Plan preview is unavailable",
         "preview.expired": "This temporary plan preview has expired. Reopen it from the pending review card.",

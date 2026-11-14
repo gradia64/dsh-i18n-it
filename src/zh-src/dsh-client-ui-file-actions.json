@@ -1,0 +1,22 @@
+{
+  "pkg": "dsh-client-ui-file-actions",
+  "entries": [
+    {
+      "ns": "fileActions",
+      "dict": {
+        "menu.finder": "在 Finder 显示",
+        "menu.reveal": "在文件夹显示",
+        "menu.saveAs": "另存为…",
+        "menu.copied": "已复制",
+        "menu.copyImage": "复制图片",
+        "menu.download": "下载",
+        "menu.saveFailed": "无法保存文件，请检查源文件和目标位置后重试",
+        "menu.copyFailed": "无法复制，请检查内容是否可用后重试",
+        "menu.saved": "已保存",
+        "menu.downloadStarted": "已开始下载",
+        "menu.downloaded": "下载完成",
+        "path.revealError": "无法显示文件位置，请重试"
+      }
+    }
+  ]
+}

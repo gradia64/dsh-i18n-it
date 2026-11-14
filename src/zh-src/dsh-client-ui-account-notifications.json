@@ -1,0 +1,11 @@
+{
+  "pkg": "dsh-client-ui-account-notifications",
+  "entries": [
+    {
+      "ns": "account.notifications",
+      "dict": {
+        "close": "关闭"
+      }
+    }
+  ]
+}

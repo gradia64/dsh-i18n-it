@@ -1,0 +1,40 @@
+{
+  "pkg": "dsh-client-ui-agent-team",
+  "entries": [
+    {
+      "ns": "agent-team",
+      "dict": {
+        "progress.completed": "{count} completate",
+        "progress.active": "{count} in corso",
+        "progress.pending": "{count} in attesa",
+        "command.title": "Lavoro di squadra degli agenti",
+        "command.running": "In esecuzione",
+        "command.done": "Completato",
+        "command.failed": "Non riuscito",
+        "command.failedReason": "Non riuscito: {reason}",
+        "trigger": "Bacheca delle attività",
+        "mode.label": "Abilita il lavoro di squadra degli agenti",
+        "mode.infoLabel": "Informazioni sul lavoro di squadra degli agenti",
+        "mode.description": "Coordina lavoro e avanzamento tra gli agenti con una bacheca delle attività condivisa, per risultati migliori nelle attività complesse, con costi in token proporzionalmente più alti.",
+        "mode.failed": "Impossibile confermare il salvataggio dell'impostazione del lavoro di squadra degli agenti. Riprova: {message}",
+        "disable.title": "Disabilitare il lavoro di squadra degli agenti?",
+        "disable.description": "Disabilitare il lavoro di squadra degli agenti durante una conversazione interrompe l'uso degli strumenti per le attività condivise e delle istruzioni di coordinamento del team.",
+        "disable.warning": "Disabilitarlo può influire sul riuso della cache, aumentare l'uso di token e i costi successivi e influire sulla collaborazione nell'attività corrente.",
+        "disable.cancel": "Annulla",
+        "disable.confirm": "Disabilita",
+        "disable.close": "Chiudi",
+        "loading": "Caricamento della bacheca delle attività…",
+        "unavailable": "La bacheca delle attività non è disponibile",
+        "failure": "Record dell'attività salvato non valido: {message}",
+        "empty": "Ancora nessuna attività condivisa. Creale tramite la conversazione.",
+        "tasks": "Attività condivise",
+        "owner": "Proprietario",
+        "unowned": "Senza proprietario",
+        "blocked": "Bloccata dalle dipendenze",
+        "status.pending": "In attesa",
+        "status.in_progress": "In corso",
+        "status.completed": "Completata"
+      }
+    }
+  ]
+}

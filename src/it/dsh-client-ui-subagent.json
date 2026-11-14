@@ -4,6 +4,12 @@
     {
       "ns": "subagent",
       "dict": {
+        "section.title": "Subagenti",
+        "section.empty": "Nessun subagente",
+        "progress.completed": "{count} completati",
+        "progress.active": "{count} in corso",
+        "progress.inactive": "{count} non in esecuzione",
+        "progress.external": "{count} esterni",
         "duration.seconds": "{seconds}s",
         "duration.minutes": "{minutes}m {seconds}s",
         "duration.hours": "{hours}h {minutes}m {seconds}s",
@@ -19,8 +25,8 @@
         "tokens.million": "{value}M",
         "tokens.total": "{value} tok",
         "loading.label": "Caricamento dei subagenti in corso...",
+        "load.idle": "Subagenti non caricati",
         "load.error": "Impossibile caricare i subagenti",
-        "catalog.migrationRequired": "Migrazione necessaria",
         "retry": "Riprova",
         "mode.external": "Attività esterna",
         "mode.oneShot": "esecuzione singola",
@@ -39,12 +45,12 @@
         "switcher.aria": "Cambia subagente: {title}",
         "tree.aria": "Sessioni con subagenti",
         "open.sidebar": "Apri nella barra laterale",
+        "open.floatWindow": "Apri nel pannello mobile",
         "open.sidebar.aria": "Apri {label} nella barra laterale",
         "sidebar.chat": "Chat",
         "readonly.oneShot.title": "Record subagente one-shot",
         "readonly.title": "Questo subagente è di sola lettura per ora",
-        "readonly.oneShot.body": "Le attività one-shot non accettano follow-up; rivedere il record di esecuzione completo qui.",
-        "readonly.body": "La sessione principale è offline; riaprirla per continuare a inviare messaggi."
+        "readonly.oneShot.body": "Le attività one-shot non accettano follow-up; rivedere il record di esecuzione completo qui."
       }
     }
   ]

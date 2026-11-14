@@ -14,7 +14,6 @@
         "preview.loading": "正在读取计划…",
         "preview.failed": "无法读取计划",
         "preview.invalidAddress": "计划地址无效",
-        "preview.historyUnavailable": "无法读取会话历史",
         "preview.notFound": "未找到这份计划",
         "preview.unavailable": "计划预览不可用",
         "preview.expired": "临时计划预览已失效，请从仍在等待审批的卡片重新打开。",

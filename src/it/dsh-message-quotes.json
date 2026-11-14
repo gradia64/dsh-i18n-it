@@ -1,0 +1,11 @@
+{
+  "pkg": "dsh-message-quotes",
+  "entries": [
+    {
+      "ns": "messageQuotes",
+      "dict": {
+        "quote.add": "Cita testo"
+      }
+    }
+  ]
+}

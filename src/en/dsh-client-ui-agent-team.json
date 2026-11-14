@@ -1,0 +1,40 @@
+{
+  "pkg": "dsh-client-ui-agent-team",
+  "entries": [
+    {
+      "ns": "agent-team",
+      "dict": {
+        "progress.completed": "{count} completed",
+        "progress.active": "{count} in progress",
+        "progress.pending": "{count} pending",
+        "command.title": "Agent teamwork",
+        "command.running": "Running",
+        "command.done": "Completed",
+        "command.failed": "Failed",
+        "command.failedReason": "Failed: {reason}",
+        "trigger": "Task board",
+        "mode.label": "Enable agent teamwork",
+        "mode.infoLabel": "About agent teamwork",
+        "mode.description": "Coordinate work and progress across agents with a shared task board for better results on complex tasks, with correspondingly higher token costs.",
+        "mode.failed": "Could not confirm the agent teamwork setting was saved. Try again: {message}",
+        "disable.title": "Disable agent teamwork?",
+        "disable.description": "Disabling agent teamwork during a conversation stops the use of shared task tools and team coordination instructions.",
+        "disable.warning": "Disabling it may affect cache reuse, increase subsequent token usage and costs, and affect collaboration on the current task.",
+        "disable.cancel": "Cancel",
+        "disable.confirm": "Disable",
+        "disable.close": "Close",
+        "loading": "Loading task board…",
+        "unavailable": "Task board is unavailable",
+        "failure": "Invalid persisted task record: {message}",
+        "empty": "No shared tasks yet. Create them through the conversation.",
+        "tasks": "Shared tasks",
+        "owner": "Owner",
+        "unowned": "Unowned",
+        "blocked": "Blocked by dependencies",
+        "status.pending": "Pending",
+        "status.in_progress": "In progress",
+        "status.completed": "Completed"
+      }
+    }
+  ]
+}

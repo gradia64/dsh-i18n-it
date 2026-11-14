@@ -31,7 +31,12 @@
         "inputFull": "Il buffer di input è pieno. Riconnettiti e riprova.",
         "attachmentEnded": "La connessione al terminale è terminata. Riconnettiti per continuare.",
         "invalidOutput": "Impossibile ricevere la schermata del terminale. Riconnettiti per ripristinarla.",
-        "terminalLimit": "È stato raggiunto il limite di terminali. Chiudi quelli inutilizzati e riprova. Anche i terminali già terminati contano nel limite."
+        "terminalLimit": "È stato raggiunto il limite di terminali. Chiudi quelli inutilizzati e riprova. Anche i terminali già terminati contano nel limite.",
+        "badge.agent": "Agente",
+        "badge.agentHint": "Aperto dall'agente. Se digiti qui ne prendi il controllo; l'agente potrà poi soltanto leggerlo.",
+        "badge.sandbox": "Sandbox",
+        "badge.readOnlyHint": "I comandi vengono eseguiti nella sandbox in sola lettura dell'agente, compresi quelli che digiti qui.",
+        "badge.workspaceWriteHint": "I comandi vengono eseguiti nella sandbox dello spazio di lavoro dell'agente, compresi quelli che digiti qui."
       }
     }
   ]

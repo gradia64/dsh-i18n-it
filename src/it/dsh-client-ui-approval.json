@@ -8,7 +8,9 @@
         "detail.aria": "Dettagli dell'approvazione",
         "escalation": "Lo strumento {toolName} richiede un'esecuzione con privilegi",
         "reject": "Rifiuta",
-        "allowOnce": "Consenti una volta"
+        "allow": "Consenti",
+        "allowOnce": "Consenti una volta",
+        "allowAlways": "Consenti sempre"
       }
     }
   ]

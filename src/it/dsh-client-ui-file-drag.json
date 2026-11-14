@@ -1,0 +1,11 @@
+{
+  "pkg": "dsh-client-ui-file-drag",
+  "entries": [
+    {
+      "ns": "fileDrag",
+      "dict": {
+        "failed": "Trascinamento non riuscito. Riprova."
+      }
+    }
+  ]
+}

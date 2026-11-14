@@ -4,6 +4,8 @@
     {
       "ns": "entryCustomization",
       "dict": {
+        "pinTooltip": "Fissa nella barra laterale sinistra",
+        "pin": "Fissa {name} nella barra laterale",
         "install": "Sfoglia altri plugin",
         "create": "Crea il tuo plugin",
         "createPrompt.sidebar": "Crea un plugin DSH con una voce nella barra laterale sinistra.",
