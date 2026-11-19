@@ -3,6 +3,10 @@
 # HANDOFF
 
 ## Current state
+- 2026-11-19: **0.4.1 — re-extracted from DSH 0.2.2-rc.5.** 65 packages, 4224 keys (was 4223). Only `dsh-client-ui-settings-web-search` changed: new `searchAutoHint` translated; `providerLegacy` changed upstream from "DeepSeek (legacy)" to "DeepSeek server-side search", re-translated as "Ricerca lato server di DeepSeek".
+  - `extract.mjs` warns about `dsh-deepseek-chat-import` (new, 31 keys, "Import DeepSeek chats" dialog). Left out of `PKGS` on purpose: it is in `OPTIONAL_BUNDLES` of `dsh-official-bundles`, not in the owner's `web` profile.
+  - Engines/peers already cover rc.5; the locale service methods and `dsh-llm` exports the client uses are unchanged.
+  - `migrate-locales.mjs` still drops the trailing newline; added back by hand. `npm test` EXIT=0. Not yet checked in the running Web UI.
 - 2026-11-14: **0.4.0 — re-extracted from DSH 0.2.2-rc.2.** 65 packages, 4223 keys (was 54 / 2909): 1396 new keys translated, 72 changed English strings re-translated, 82 removed.
   - `extract.mjs`: 0.2.2-rc.2 bundles are minified. It now accepts backtick strings (consts, namespace args, `dictionaries` arrays) and `register(NS, someConst)` where the const is `{ zh: ..., en: ... }`.
   - `PKGS`: +13 packages (`account-notifications`, `action-cards`, `agent-team`, `context-menu`, `creation-recommendations`, `file-actions`, `file-drag`, `plugin-recommendations`, `dsh-cua`, `experimental-client-ui-forge`, `experimental-client-ui-stats`, `experimental-liveshare`, `dsh-message-quotes`); −2 (`deepseek-model-label-1017` removed upstream; `dsh-experimental-client-ui-agent-team` renamed to `dsh-client-ui-agent-team`, `src/it` file moved with git so the translations carried over).
@@ -29,7 +33,7 @@
 - 2026-10-30: **Re-extracted from DSH 0.2.1-rc.5.** Only change: `conversation` key `session.moreViewsCurrent` removed (2910 → 2909). No new or changed strings. The 15 new `@deepseek-ai/*` packages have no zh dictionaries, so `PKGS` is unchanged. `dsh-llm`, `dsh-client-locale`, `dsh-client-connection` and `dsh-app-boot` are byte-identical to rc.3. `npm test` EXIT=0. Not yet checked on Desktop.
   - `DOM_SKIP_SELECTOR`: `data-team-id`, `data-recovery`, `data-renderer-recovery`, `data-boot-recovery` are not found in the npm packages, and they were not there in rc.3 either. Left as they are.
   - `migrate-locales.mjs` writes files without a trailing newline and still prints the removed `fill-traditional` step. Add the newline back by hand.
-- DSH coverage: dictionaries extracted from **0.2.2-rc.2** (65 packages, 4223 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
+- DSH coverage: dictionaries extracted from **0.2.2-rc.5** (65 packages, 4224 keys); `engines.dsh` `>=0.1.1-rc.2 <0.3.0-0`.
 
 ## Next
 - Nothing pending. On the next DSH release follow "Updating for a new DSH release" below.

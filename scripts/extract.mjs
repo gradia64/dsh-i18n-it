@@ -21,7 +21,7 @@ const candidates = [
 const root = candidates.find((candidate) => fs.existsSync(path.join(candidate, "dsh-client-locale", "lib", "client.js")));
 if (!root) throw new Error(`No installed DSH locale packages found under: ${path.resolve(installed)}`);
 
-// DSH 0.2.0-rc.2: new packages added since the 0.1.1-rc line. Re-run against 0.2.1-rc.2, 0.2.1-rc.3 and 0.2.2-rc.2.
+// DSH 0.2.0-rc.2: new packages added since the 0.1.1-rc line. Re-run against 0.2.1-rc.2, 0.2.1-rc.3, 0.2.2-rc.2 and 0.2.2-rc.5.
 // 0.2.2-rc.2 ships minified bundles (backtick strings, register(NS, dictionariesConst)); it dropped
 // dsh-client-ui-deepseek-model-label-1017 and renamed dsh-experimental-client-ui-agent-team to dsh-client-ui-agent-team.
 const PKGS = [
